@@ -1,0 +1,24 @@
+
+[
+  {
+    "idEstadoCasilleroPercha": 1,
+    "nombreEstadoCasilleroPercha": "Disponible",
+    "fechaAltaEstadoCasilleroPercha": "2023-01-01",
+    "fechaModificacionEstadoCasilleroPercha": null,
+    "fechaBajaEstadoCasilleroPercha": null
+  },
+  {
+    "idEstadoCasilleroPercha": 2,
+    "nombreEstadoCasilleroPercha": "Ocupado",
+    "fechaAltaEstadoCasilleroPercha": "2023-01-01",
+    "fechaModificacionEstadoCasilleroPercha": null,
+    "fechaBajaEstadoCasilleroPercha": null
+  },
+  {
+    "idEstadoCasilleroPercha": 3,
+    "nombreEstadoCasilleroPercha": "Mantenimiento",
+    "fechaAltaEstadoCasilleroPercha": "2023-01-01",
+    "fechaModificacionEstadoCasilleroPercha": null,
+    "fechaBajaEstadoCasilleroPercha": null
+  }
+]

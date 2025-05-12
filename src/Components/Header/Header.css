@@ -1,0 +1,59 @@
+/* Estilos para el header */
+.header {
+  height: 80vh;
+  min-height: 600px;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url("../assets/fondo2.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  color: #fff;
+}
+
+/* Estilos para el contenedor de nombres */
+.nombres {
+  width: 100%;
+  padding-right: 15px;
+  padding-left: 100px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+/* Estilos para el navbar */
+.navbar {
+  background-color: #343a40; /* Color de fondo oscuro para el navbar */
+  padding: 10px 0;
+}
+
+.navbar-brand img {
+  height: 50px; /* Ajusta el tamaño del logo */
+}
+
+.nav-link {
+  color: #fff !important; /* Color blanco para los enlaces */
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0 10px;
+}
+
+.nav-link:hover {
+  color: #ffc800 !important; /* Color naranja al pasar el cursor */
+}
+
+.navbar-collapse {
+  justify-content: flex-end; /* Alinea los elementos del navbar a la derecha */
+}
+
+/* Estilos para el dropdown */
+.nav-dropdown {
+  background-color: #343a40; /* Fondo oscuro para el dropdown */
+}
+
+.nav-dropdown .dropdown-item {
+  color: #fff; /* Color blanco para los elementos del dropdown */
+}
+
+.nav-dropdown .dropdown-item:hover {
+  background-color: rgba(255, 200, 0, 0.2); /* Fondo semi-transparente al pasar el cursor */
+  color: #ffc800; /* Color naranja para el texto al pasar el cursor */
+}

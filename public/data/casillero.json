@@ -1,0 +1,15 @@
+[
+    {
+        "idCasillero": 1,
+        "numeroCasillero": 1,
+        "fechaAltaCasillero": null,
+        "fechaBajaCasillero": null,
+        "fechaModificacionCasillero": null,
+        "tipoCasillero": {
+            "idTipoCasillero": 1,
+            "nombreTipoCasillero": "Disponible"
+        }
+    
+    }
+
+]

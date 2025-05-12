@@ -1,0 +1,46 @@
+/* Layout principal (Header + Sidebar + Contenido) */
+.app-layout {
+  display: flex;
+  margin-top: 10px; /* Ajusta según la altura del Header */
+}
+
+
+/* Sidebar (componente fijo) */
+.sidebar-container {
+  width: 250px;
+  height: calc(100vh - 60px);
+  position: fixed;
+  left: 0;
+  top: 60px; /* Debajo del Header */
+  z-index: 100; /* Asegura que esté detrás del FilterBar móvil */
+  overflow-y: auto;
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 250px; /* Espacio para el Sidebar */
+  padding: 20px;
+  width: calc(100% - 250px);
+}
+
+/* Ajustes para el FilterBar móvil */
+@media (max-width: 768px) {
+  .sidebar-container {
+    display: none; /* Oculta el Sidebar en móviles si es necesario */
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Asegura que el FilterBar móvil esté por encima del contenido */
+  .filter-bar.mobile {
+    z-index: 1001; /* Mayor que el Sidebar */
+  }
+
+  .menu-toggle {
+    z-index: 1002; /* Por encima del FilterBar */
+    top: 70px; /* Debajo del Header */
+  }
+}
