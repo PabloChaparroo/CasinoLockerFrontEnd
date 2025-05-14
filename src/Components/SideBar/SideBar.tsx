@@ -3,6 +3,16 @@ import { Nav } from "react-bootstrap";
 import { NavLink, useLocation } from "react-router-dom";
 import "../FilterBar/FilterBar"
 import "./SideBar.css";
+import { FaHome } from 'react-icons/fa';
+import { TbHanger } from "react-icons/tb";
+import { PiLockersBold } from "react-icons/pi";
+import { RiProhibitedLine } from "react-icons/ri";
+import { HiOutlineClipboardDocumentList } from "react-icons/hi2";
+import { TbUsersGroup } from "react-icons/tb";
+
+
+
+
 
 const Sidebar = () => {
   const location = useLocation(); // Obtiene la ruta actual
@@ -18,6 +28,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <FaHome className="sidebar-icon" />
           Home
         </NavLink>
         
@@ -27,6 +38,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <PiLockersBold className="sidebar-icon" />
           Casilleros
         </NavLink>
 
@@ -37,6 +49,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <TbHanger className="sidebar-icon" />
           Perchas
         </NavLink>
 
@@ -46,6 +59,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <RiProhibitedLine className="sidebar-icon" />
           Casilleros De Objetos Perdidos
         </NavLink>
 
@@ -55,6 +69,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <HiOutlineClipboardDocumentList className="sidebar-icon" />
           ABM Casilleros
         </NavLink>
 
@@ -64,6 +79,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <HiOutlineClipboardDocumentList className="sidebar-icon" />
           ABM Perchas
         </NavLink>
 
@@ -73,6 +89,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <HiOutlineClipboardDocumentList className="sidebar-icon" />
           ABM Tipo Casilleros
         </NavLink>
 
@@ -82,6 +99,7 @@ const Sidebar = () => {
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
+          <TbUsersGroup className="sidebar-icon" />
           ABM Usuarios
         </NavLink>
       </Nav>
