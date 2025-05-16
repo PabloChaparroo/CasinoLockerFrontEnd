@@ -1,6 +1,6 @@
 
 export interface EstadoCasilleroPercha{
-    idEstadoCasilleroPercha: number;
+    id: number ;
     nombreEstadoCasilleroPercha: string;
     fechaAltaEstadoCasilleroPercha: string | null;
     fechaModificacionEstadoCasilleroPercha: string | null;

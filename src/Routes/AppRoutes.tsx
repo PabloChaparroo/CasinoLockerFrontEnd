@@ -7,6 +7,7 @@ import { AbmCasillerosPage } from "../Pages/AbmCasillerosPage";
 import AbmPerchasPage from "../Pages/AbmPerchasPage";
 import AbmTipoCasilleroPage from "../Pages/AbmTipoCasilleroPage";
 import AbmUsuarioPage from "../Pages/AbmUsuarioPage";
+import AbmEstadoCasilleroPerchaPage from "../Pages/AbmEstadoCasilleroPerchaPage";
 
 
 const AppRoutes: React.FC = () => {
@@ -20,6 +21,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/abmCasilleros" element={<AbmCasillerosPage/>}/>
             <Route path="/abmPerchas" element={<AbmPerchasPage/>}/>
             <Route path="/abmTipoCasilleros" element={<AbmTipoCasilleroPage/>}/>
+            <Route path="/abmEstadoCasilleroPercha" element={<AbmEstadoCasilleroPerchaPage/>}/>
             <Route path="/abmUsuarios" element={<AbmUsuarioPage/>}/>
             
 

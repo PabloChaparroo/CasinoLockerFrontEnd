@@ -83,7 +83,7 @@ const Sidebar = () => {
           ABM Perchas
         </NavLink>
 
-                <NavLink 
+          <NavLink 
           to="/abmTipoCasilleros" 
           className={({ isActive }) => 
             `sidebar-link ${isActive ? "active" : ""}`
@@ -93,7 +93,17 @@ const Sidebar = () => {
           ABM Tipo Casilleros
         </NavLink>
 
-                <NavLink 
+        <NavLink 
+          to="/abmEstadoCasilleroPercha" 
+          className={({ isActive }) => 
+            `sidebar-link ${isActive ? "active" : ""}`
+          }
+        >
+          <HiOutlineClipboardDocumentList className="sidebar-icon" />
+          ABM Estados Casilleros/Perchas
+        </NavLink>
+
+        <NavLink 
           to="/abmUsuarios" 
           className={({ isActive }) => 
             `sidebar-link ${isActive ? "active" : ""}`
@@ -102,6 +112,10 @@ const Sidebar = () => {
           <TbUsersGroup className="sidebar-icon" />
           ABM Usuarios
         </NavLink>
+
+
+
+
       </Nav>
     </div>
   );
