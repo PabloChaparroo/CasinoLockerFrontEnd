@@ -8,7 +8,7 @@ import Loader from '../Loader/Loader';
 import EditButton from '../EditButton/EditButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
 import AbmEstadoCasilleroPerchaModal from '../AbmEstadoCasilleroPerchaModal/AbmEstadoCasilleroPerchaModal';
-
+import './AbmEstadoCasilleroPercha.css';
 const AbmEstadoCasilleroPerchaTabla = () => {
 
 //Para evitar el undefined
@@ -61,74 +61,94 @@ const AbmEstadoCasilleroPerchaTabla = () => {
 
 
   return (
-    <>
-    <div>
-    <Button onClick={()=>handleClick("Crear Estado: ", initializableNewEstadoCasilleroPercha(), ModalType.CREATE)}>
-            Nuevo Estado
-    </Button>  
+        <>
+        <div className="table-container">
+            <div className="table-header">
+                <h4 className="table-title">ABM Estado Casillero/Percha</h4>
+                <div className="table-actions">
+                    <Button
+                        className="action-btn"
+                         onClick={() =>
+                          handleClick(
+                         'Crear Estado: ',
+                         initializableNewEstadoCasilleroPercha(),
+                            ModalType.CREATE
+                      )
+        }
+      >
+        Nuevo Estado
+      </Button>
     </div>
-    <div>
-        {isLoading ? <Loader/> : (
-            <div className="center-table-container table-shadow rounded p-4">
-                <Table striped bordered hover className="w-auto">
-                    <thead>
-                        <tr>
-                            <th className="text-center">ID</th>
-                            <th className="text-center">Nombre Estado</th>
-                            <th className="text-center">Fecha Alta</th>
-                            <th className="text-center">Fecha Modificación</th>
-                            <th className="text-center">Fecha Baja</th>
-                            <th className="text-center">Color</th>
-                            <th className="text-center">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {estadosCasilleroPercha.map(estado=>(
-                            <tr key={estado.id}>
-                                <td className="text-center">{estado.id}</td>
-                                <td className="text-center">{estado.nombreEstadoCasilleroPercha}</td>
-                                <td className="text-center">{estado.fechaAltaEstadoCasilleroPercha}</td>
-                                <td className="text-center">{estado.fechaModificacionEstadoCasilleroPercha}</td>
-                                <td className="text-center">{estado.fechaBajaEstadoCasilleroPercha}</td>
-                                <td className="text-center">
-                                <div 
-                                    style={{
-                                        backgroundColor: estado.colorEstadoCasilleroPercha,
-                                        width: '20px',
-                                        height: '20px',
-                                        margin: '0 auto',
-                                        border: '1px solid #ddd'
-                                    }}
-                                    title={estado.colorEstadoCasilleroPercha}
-                                />
-                                </td>
-                                
-                                <td className="text-center">
-                                    <span className="me-2">
-                                        <EditButton onClick={() => handleClick("Editar estado", estado, ModalType.UPDATE)}/>
-                                    </span>
-                                    <span>
-                                        <DeleteButton onClick={() => handleClick("Borrar estado", estado, ModalType.DELETE)}/>
-                                    </span>
-                                </td>
-                            </tr>
-                        ))}
-                        
-                    </tbody>
-                </Table>
-            </div>
-        )}
-        </div>
+    </div>
+  {isLoading ? (
+    <Loader />
+  ) : (
+    <div className="table-wrapper">
+      <Table striped bordered hover responsive className="custom-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre Estado</th>
+            <th>Fecha Alta</th>
+            <th>Fecha Modificación</th>
+            <th>Fecha Baja</th>
+            <th>Color</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {estadosCasilleroPercha.map((estado) => (
+            <tr key={estado.id}>
+              <td>{estado.id}</td>
+              <td>{estado.nombreEstadoCasilleroPercha}</td>
+              <td>{estado.fechaAltaEstadoCasilleroPercha}</td>
+              <td>{estado.fechaModificacionEstadoCasilleroPercha}</td>
+              <td>{estado.fechaBajaEstadoCasilleroPercha}</td>
+              <td>
+                <div
+                  className="color-box"
+                  style={{
+                    backgroundColor: estado.colorEstadoCasilleroPercha,
+                  }}
+                  title={estado.colorEstadoCasilleroPercha}
+                />
+              </td>
+              <td>
+                <span className="me-2">
+                  <EditButton
+                    onClick={() =>
+                      handleClick('Editar estado', estado, ModalType.UPDATE)
+                    }
+                  />
+                </span>
+                <span>
+                  <DeleteButton
+                    onClick={() =>
+                      handleClick('Borrar estado', estado, ModalType.DELETE)
+                    }
+                  />
+                </span>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  )}
+</div>
 
-        {showModal && <AbmEstadoCasilleroPerchaModal 
-                      tituloModal={tituloModal} 
-                      showModal={showModal}
-                      onHide={() => setShowModal(false)} 
-                      modalType={modalType} 
-                      estadoCasilleroPercha={estadoCasilleroPercha}
-                      refreshData={setRefreshData}/>}       
-    </>
-  )
+            {showModal && (
+                <AbmEstadoCasilleroPerchaModal
+                    tituloModal={tituloModal}
+                    showModal={showModal}
+                    onHide={() => setShowModal(false)}
+                    modalType={modalType}
+                    estadoCasilleroPercha={estadoCasilleroPercha}
+                    refreshData={setRefreshData}
+                />
+            )}
+        </>
+    )
 }
 
 

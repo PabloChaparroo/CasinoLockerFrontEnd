@@ -8,6 +8,7 @@ import { EstadoCasilleroPerchaService } from "../../Services/EstadoCasilleroPerc
 import { ModalType } from "../../enums/ModalTypes";
 import { Button, Form, FormLabel, Modal } from "react-bootstrap";
 
+
 type EstadoCasilleroPerchaModalProps = {
     tituloModal: string;
     showModal: boolean;
@@ -70,27 +71,27 @@ const AbmEstadoCasilleroPerchaModal = ({tituloModal, showModal, onHide, modalTyp
 
     //Altas y Modificaciones 
     const handleSaveUpdate = async (estadoCasilleroPercha: EstadoCasilleroPercha) => {
-        try {
-            // Validar y depurar el objeto estadoCasilleroPercha
-            console.log('Datos a enviar:', estadoCasilleroPercha);
+    try {
+        console.log('Datos a enviar:', estadoCasilleroPercha);
         
-            const isNew = estadoCasilleroPercha.id === 0;
-            if (isNew) {
-                await EstadoCasilleroPerchaService.createEstado(estadoCasilleroPercha);
-            } else {
-                estadoCasilleroPercha.fechaModificacionEstadoCasilleroPercha = estadoCasilleroPercha.fechaAltaEstadoCasilleroPercha;
-                await EstadoCasilleroPerchaService.updateEstado(estadoCasilleroPercha.id, estadoCasilleroPercha);
-            }
-            toast.success(isNew ? "Estado creado c  on éxito" : "Estado actualizado con éxito", {
-                position: "top-center",
-            });
-            onHide();
-            refreshData(prevState => !prevState);
-        } catch (error) {
-            console.error('Error al guardar/actualizar el estado:', error);
-            toast.error('Ha ocurrido un error');
+        const isNew = estadoCasilleroPercha.id === 0;
+        if (isNew) {
+            await EstadoCasilleroPerchaService.createEstado(estadoCasilleroPercha);
+        } else {
+            // Aquí está el cambio importante - usar la fecha actual para modificación
+            estadoCasilleroPercha.fechaModificacionEstadoCasilleroPercha = new Date().toISOString().split('T')[0];
+            await EstadoCasilleroPerchaService.updateEstado(estadoCasilleroPercha.id, estadoCasilleroPercha);
         }
-    };
+        toast.success(isNew ? "Estado creado con éxito" : "Estado actualizado con éxito", {
+            position: "top-center",
+        });
+        onHide();
+        refreshData(prevState => !prevState);
+    } catch (error) {
+        console.error('Error al guardar/actualizar el estado:', error);
+        toast.error('Ha ocurrido un error');
+    }
+};
 
     
     return (
