@@ -1,11 +1,10 @@
-import type { EstadoCasilleroPercha } from "./EstadoCasilleroPercha";
+import type { EstadoCasilleroPercha } from './EstadoCasilleroPercha';
 
-export interface Percha{
-    idPercha: number;
+export interface Percha {
+    id: number;
     numeroPercha: number;
     fechaAltaPercha: string | null;
     fechaModificacionPercha: string | null;
     fechaBajaPercha: string | null;
-    estadoCasilleroPercha: EstadoCasilleroPercha;
-
+    estadoCasilleroPercha: EstadoCasilleroPercha | null;
 }

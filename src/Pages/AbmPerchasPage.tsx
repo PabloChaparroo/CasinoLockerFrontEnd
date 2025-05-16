@@ -1,8 +1,8 @@
-import React from 'react'
+import AbmPerchaTabla from "../Components/AbmPerchaTabla/AbmPerchaTabla"
 
 const AbmPerchasPage = () => {
   return (
-    <div>AbmPerchasPage</div>
+    <AbmPerchaTabla/>
   )
 }
 

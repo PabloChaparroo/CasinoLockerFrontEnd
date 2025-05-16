@@ -1,0 +1,105 @@
+.table-container {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f9fa;
+  padding: 1rem;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.table-title {
+  margin: 0;
+  font-weight: bold;
+  color: #333;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-btn {
+  background-color: #007bff;
+  border: none;
+  color: white;
+}
+
+.action-btn:hover {
+  background-color: #0069d9;
+}
+
+.table-wrapper {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.08);
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.color-box {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #ccc;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.table th {
+  background-color: #dee2e6;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.table td {
+  text-align: center;
+  vertical-align: middle !important;
+}
+
+.mostrar-checkbox {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.mostrar-checkbox input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid #6c757d; /* gris oscuro */
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+.mostrar-checkbox input[type="checkbox"]:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.mostrar-checkbox input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  width: 4px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.mostrar-checkbox label {
+  margin-bottom: 0;
+  cursor: pointer;
+}
