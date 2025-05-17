@@ -1,6 +1,6 @@
 
 export interface TipoCasillero{
-    idTipoCasillero: number;
+    id: number;
     nombreTipoCasillero: string;
     fechaAltaTipoCasillero: string | null;
     fechaModificacionTipoCasillero: string | null;

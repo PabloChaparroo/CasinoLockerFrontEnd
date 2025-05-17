@@ -1,8 +1,9 @@
-import React from 'react'
+
+import AbmTipoCasilleroTabla from '../Components/AbmTipoCasilleroTabla/AbmTipoCasilleroTabla'
 
 const AbmTipoCasilleroPage = () => {
   return (
-    <div>AbmTipoCasilleroPage</div>
+    <AbmTipoCasilleroTabla/>
   )
 }
 
