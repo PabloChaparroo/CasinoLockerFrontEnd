@@ -165,23 +165,22 @@ const AbmEstadoCasilleroPerchaModal = ({tituloModal, showModal, onHide, modalTyp
 
                             {/* Campo Fecha Alta (solo lectura en updates) */}
                             <Form.Group controlId="formFechaAltaEstadoCasilleroPercha" className="mt-3">
-    <FormLabel>Fecha Alta:</FormLabel>
-    <Form.Control
-        name="fechaAltaEstadoCasilleroPercha"
-        type="date"
-        value={formik.values.fechaAltaEstadoCasilleroPercha || new Date().toISOString().split('T')[0]}
-        onChange={(e) => {
-            // Eliminamos la posibilidad de cambiar la fecha manualmente
-            // formik.setFieldValue('fechaAltaEstadoCasilleroPercha', e.target.value);
-        }}
-        disabled // Siempre deshabilitado
-        onBlur={formik.handleBlur}
-        isInvalid={!!formik.errors.fechaAltaEstadoCasilleroPercha && formik.touched.fechaAltaEstadoCasilleroPercha}
-    />
-    <Form.Control.Feedback type="invalid">
-        {formik.errors.fechaAltaEstadoCasilleroPercha}
-    </Form.Control.Feedback>
-</Form.Group>
+                                <FormLabel>Fecha Alta:</FormLabel>
+                                <Form.Control
+                                    name="fechaAltaEstadoCasilleroPercha"
+                                    type="date"
+                                    value={formik.values.fechaAltaEstadoCasilleroPercha || new Date().toISOString().split('T')[0]}
+                                    onChange={(e) => {
+                                        
+                                    }}
+                                    disabled // Siempre deshabilitado
+                                    onBlur={formik.handleBlur}
+                                    isInvalid={!!formik.errors.fechaAltaEstadoCasilleroPercha && formik.touched.fechaAltaEstadoCasilleroPercha}
+                                />
+                                <Form.Control.Feedback type="invalid">
+                                    {formik.errors.fechaAltaEstadoCasilleroPercha}
+                                </Form.Control.Feedback>
+                            </Form.Group>
 
                             {/* Campo Fecha Modificación (solo visible en updates) */}
                             {modalType === ModalType.UPDATE && (

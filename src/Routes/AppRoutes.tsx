@@ -2,12 +2,12 @@ import { Route, Routes } from "react-router-dom";
 import HomePage from "../Pages/HomePage";
 import CasillerosPages from "../Pages/CasillerosPages";
 import PerchasPages from "../Pages/PerchasPages";
-import CasillerosDeObjetosPerdidosPages from "../Pages/CasillerosDeObjetosPerdidosPages";
 import { AbmCasillerosPage } from "../Pages/AbmCasillerosPage";
 import AbmPerchasPage from "../Pages/AbmPerchasPage";
 import AbmTipoCasilleroPage from "../Pages/AbmTipoCasilleroPage";
 import AbmUsuarioPage from "../Pages/AbmUsuarioPage";
 import AbmEstadoCasilleroPerchaPage from "../Pages/AbmEstadoCasilleroPerchaPage";
+import ClientesPages from "../Pages/ClientesPages";
 
 
 const AppRoutes: React.FC = () => {
@@ -17,7 +17,7 @@ const AppRoutes: React.FC = () => {
             <Route path="/" element={<HomePage/>}/>
             <Route path="/casilleros" element={<CasillerosPages/>}/>
             <Route path="/perchas" element={<PerchasPages/>}/>
-            <Route path="/casillerosDeObjetosPerdidos" element={<CasillerosDeObjetosPerdidosPages/>}/>
+            <Route path="/clientes" element={<ClientesPages/>}/>
             <Route path="/abmCasilleros" element={<AbmCasillerosPage/>}/>
             <Route path="/abmPerchas" element={<AbmPerchasPage/>}/>
             <Route path="/abmTipoCasilleros" element={<AbmTipoCasilleroPage/>}/>

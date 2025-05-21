@@ -28,9 +28,14 @@ const AbmPerchaModal = ({
 }: PerchaModalProps) => {
   const [estados, setEstados] = useState<EstadoCasilleroPercha[]>([]);
 
+  const [perchas, setPerchas] = useState<Percha[]>([]);
+
+
   useEffect(() => {
     const fetchEstados = async () => {
       try {
+        const cargarPerchas = await PerchaService.getPerchas();
+        setPerchas(cargarPerchas);
         const datos = await EstadoCasilleroPerchaService.getEstados();
         setEstados(datos);
       } catch (error) {
@@ -117,7 +122,17 @@ const handleDelete = async () => {
 
   const handleSaveUpdate = async (values: Percha) => {
     try {
+      
       const isNew = values.id === 0;
+
+      if(isNew){
+        const chequearPercha = perchas.find(p => p.numeroPercha === values.numeroPercha);
+        if(chequearPercha){
+          toast.error("Numero de percha ocupada")
+          return;
+        }
+      }
+
       if (!isNew) {
         values.fechaModificacionPercha = new Date().toISOString().split("T")[0];
       }

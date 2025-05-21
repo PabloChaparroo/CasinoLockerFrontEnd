@@ -9,6 +9,7 @@
   align-items: center;
   justify-content: space-between;
   transition: all 0.3s ease;
+   box-sizing: border-box;
 }
 
 /* Sombra personalizada */
@@ -46,4 +47,9 @@
   background-color: #ffffff;
   color: #2c7da0;
   border-color: #ffffff;
+}
+
+.header-section {
+    width: 100%;
+    box-sizing: border-box; /* Asegura que el padding y el border no afecten el ancho total */
 }

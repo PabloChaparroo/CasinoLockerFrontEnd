@@ -44,3 +44,8 @@
     top: 70px; /* Debajo del Header */
   }
 }
+
+.page-container {
+    min-width: 1200px; /* Ajusta este valor según tus necesidades */
+    margin: 0 auto; /* Centra el contenido */
+}

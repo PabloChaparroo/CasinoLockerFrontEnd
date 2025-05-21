@@ -54,13 +54,13 @@ const Sidebar = () => {
         </NavLink>
 
         <NavLink 
-          to="/casillerosDeObjetosPerdidos" 
+          to="/clientes" 
           className={({ isActive }) => 
             `sidebar-link ${isActive ? "active" : ""}`
           }
         >
-          <RiProhibitedLine className="sidebar-icon" />
-          Casilleros De Objetos Perdidos
+          <TbUsersGroup className="sidebar-icon" />
+          Clientes
         </NavLink>
 
         <NavLink 

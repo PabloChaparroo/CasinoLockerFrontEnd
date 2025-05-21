@@ -14,7 +14,7 @@ export const TipoCasilleroService = {
     getTipoCasillero: async (idTipoCasillero: number): Promise<TipoCasillero> => {
         const response = await fetch(`${BASE_URL}/api/tipo_casilleros/${idTipoCasillero}`);
         const data = await response.json();
-        const tipo = data.find((t: TipoCasillero) => t.idTipoCasillero === idTipoCasillero);
+        const tipo = data.find((t: TipoCasillero) => t.id === idTipoCasillero);
         return tipo;
     },
 

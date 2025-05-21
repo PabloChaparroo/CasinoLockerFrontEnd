@@ -1,5 +1,6 @@
 
 export interface EstadoCasilleroPercha{
+    target: any;
     id: number ;
     nombreEstadoCasilleroPercha: string;
     fechaAltaEstadoCasilleroPercha: string | null;
