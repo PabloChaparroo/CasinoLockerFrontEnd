@@ -1,9 +1,10 @@
 /* CasillerosPages.css */
 .casilleros-container {
   padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden; /* Previene desbordamiento horizontal */
 }
 
 .header-section {

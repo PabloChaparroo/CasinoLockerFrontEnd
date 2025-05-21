@@ -27,9 +27,7 @@ const AbmPerchaModal = ({
   refreshData,
 }: PerchaModalProps) => {
   const [estados, setEstados] = useState<EstadoCasilleroPercha[]>([]);
-
   const [perchas, setPerchas] = useState<Percha[]>([]);
-
 
   useEffect(() => {
     const fetchEstados = async () => {
@@ -47,7 +45,8 @@ const AbmPerchaModal = ({
 
   const validationSchema = Yup.object().shape({
     numeroPercha: Yup.number().min(1).required("El número es obligatorio"),
-    fechaAltaPercha: Yup.string().required("La fecha es requerida"),
+    // Quitamos la validación requerida de fechaAltaPercha para que no sea obligatorio
+    fechaAltaPercha: Yup.string(),
     estadoCasilleroPercha: Yup.object()
       .nullable()
       .required("El estado es requerido"),
@@ -62,80 +61,81 @@ const AbmPerchaModal = ({
     enableReinitialize: true,
   });
 
-const handleDelete = async () => {
-  try {
-    const fechaBaja = new Date().toISOString().split("T")[0];
+  const handleDelete = async () => {
+    try {
+      const fechaBaja = new Date().toISOString().split("T")[0];
 
-    // Buscar el estado "Dado_de_baja"
-    const estadoBaja = estados.find(
-      (e) => e.nombreEstadoCasilleroPercha === "Dado_de_baja"
-    );
+      const estadoBaja = estados.find(
+        (e) => e.nombreEstadoCasilleroPercha === "Dado_de_baja"
+      );
 
-    if (!estadoBaja) {
-      toast.error('No se encontró el estado "Dado_de_baja"');
-      return;
+      if (!estadoBaja) {
+        toast.error('No se encontró el estado "Dado_de_baja"');
+        return;
+      }
+
+      await PerchaService.updatePercha(percha.id, {
+        ...percha,
+        fechaBajaPercha: fechaBaja,
+        fechaModificacionPercha: fechaBaja,
+        estadoCasilleroPercha: estadoBaja,
+      });
+
+      toast.success("Percha dada de baja");
+      onHide();
+      refreshData((prev) => !prev);
+    } catch (error) {
+      toast.error("Error al dar de baja la percha");
     }
-
-    await PerchaService.updatePercha(percha.id, {
-      ...percha,
-      fechaBajaPercha: fechaBaja,
-      fechaModificacionPercha: fechaBaja,
-      estadoCasilleroPercha: estadoBaja,
-    });
-
-    toast.success("Percha dada de baja");
-    onHide();
-    refreshData((prev) => !prev);
-  } catch (error) {
-    toast.error("Error al dar de baja la percha");
-  }
-};
+  };
 
   const handleRestore = async () => {
-  try {
-    const fechaMod = new Date().toISOString().split("T")[0];
+    try {
+      const fechaMod = new Date().toISOString().split("T")[0];
 
-    // Buscar el estado "Disponible"
-    const estadoDisponible = estados.find(
-      (e) => e.nombreEstadoCasilleroPercha === "Disponible"
-    );
+      const estadoDisponible = estados.find(
+        (e) => e.nombreEstadoCasilleroPercha === "Disponible"
+      );
 
-    if (!estadoDisponible) {
-      toast.error('No se encontró el estado "Disponible"');
-      return;
+      if (!estadoDisponible) {
+        toast.error('No se encontró el estado "Disponible"');
+        return;
+      }
+
+      await PerchaService.updatePercha(percha.id, {
+        ...percha,
+        fechaBajaPercha: "",
+        fechaModificacionPercha: fechaMod,
+        estadoCasilleroPercha: estadoDisponible,
+      });
+
+      toast.success("Percha dada de alta");
+      onHide();
+      refreshData((prev) => !prev);
+    } catch (error) {
+      toast.error("Error al dar de alta la percha");
     }
-
-    await PerchaService.updatePercha(percha.id, {
-      ...percha,
-      fechaBajaPercha: '',
-      fechaModificacionPercha: fechaMod,
-      estadoCasilleroPercha: estadoDisponible,
-    });
-
-    toast.success("Percha dada de alta");
-    onHide();
-    refreshData((prev) => !prev);
-  } catch (error) {
-    toast.error("Error al dar de alta la percha");
-  }
-};
+  };
 
   const handleSaveUpdate = async (values: Percha) => {
     try {
-      
       const isNew = values.id === 0;
 
-      if(isNew){
-        const chequearPercha = perchas.find(p => p.numeroPercha === values.numeroPercha);
-        if(chequearPercha){
-          toast.error("Numero de percha ocupada")
+      if (isNew) {
+        const chequearPercha = perchas.find(
+          (p) => p.numeroPercha === values.numeroPercha
+        );
+        if (chequearPercha) {
+          toast.error("Numero de percha ocupada");
           return;
         }
-      }
 
-      if (!isNew) {
+        // Asignar la fecha de alta automáticamente al crear
+        values.fechaAltaPercha = new Date().toISOString().split("T")[0];
+      } else {
         values.fechaModificacionPercha = new Date().toISOString().split("T")[0];
       }
+
       const action = isNew
         ? PerchaService.createPercha(values)
         : PerchaService.updatePercha(values.id, values);
@@ -159,13 +159,13 @@ const handleDelete = async () => {
           <Modal.Body>
             {modalType === ModalType.DELETE ? (
               <p>
-                ¿Está seguro que desea dar de <strong>baja</strong> la percha con ID:{" "}
-                <strong>{percha.id}</strong>?
+                ¿Está seguro que desea dar de <strong>baja</strong> la percha con
+                ID: <strong>{percha.id}</strong>?
               </p>
             ) : (
               <p>
-                ¿Está seguro que desea <strong>dar de alta</strong> la percha con ID:{" "}
-                <strong>{percha.id}</strong>?
+                ¿Está seguro que desea <strong>dar de alta</strong> la percha con
+                ID: <strong>{percha.id}</strong>?
               </p>
             )}
           </Modal.Body>
@@ -200,8 +200,7 @@ const handleDelete = async () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   isInvalid={
-                    !!formik.errors.numeroPercha &&
-                    formik.touched.numeroPercha
+                    !!formik.errors.numeroPercha && formik.touched.numeroPercha
                   }
                 />
                 <Form.Control.Feedback type="invalid">
@@ -212,31 +211,21 @@ const handleDelete = async () => {
               <Form.Group className="mt-3">
                 <FormLabel>Fecha de Alta</FormLabel>
                 <Form.Control
-                  name="fechaAltaPercha"
-                  type="date"
+                  type="text"
+                  readOnly
+                  plaintext
                   value={
                     formik.values.fechaAltaPercha ||
                     new Date().toISOString().split("T")[0]
                   }
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  isInvalid={
-                    !!formik.errors.fechaAltaPercha &&
-                    formik.touched.fechaAltaPercha
-                  }
                 />
-                <Form.Control.Feedback type="invalid">
-                  {formik.errors.fechaAltaPercha}
-                </Form.Control.Feedback>
               </Form.Group>
 
               <Form.Group className="mt-3">
                 <FormLabel>Estado</FormLabel>
                 <Form.Select
                   name="estadoCasilleroPercha"
-                  value={
-                    formik.values.estadoCasilleroPercha?.id.toString() || ''
-                  }
+                  value={formik.values.estadoCasilleroPercha?.id.toString() || ""}
                   onChange={(e) => {
                     const selected = estados.find(
                       (est) => est.id === parseInt(e.target.value)
@@ -265,7 +254,7 @@ const handleDelete = async () => {
                   Cancelar
                 </Button>
                 <Button type="submit" variant="primary">
-                  {modalType === ModalType.CREATE ? 'Crear' : 'Actualizar'}
+                  {modalType === ModalType.CREATE ? "Crear" : "Actualizar"}
                 </Button>
               </div>
             </Form>

@@ -1,0 +1,101 @@
+/* PerchasPages.css */
+.perchas-container {
+  padding: 2rem;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+.perchas-grid-container {
+  margin-top: 1.5rem;
+}
+
+.perchas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 20px;
+}
+
+.percha-card {
+  border-radius: 10px;
+  padding: 1.2rem 0.8rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 120px;
+  position: relative;
+  overflow: hidden;
+  color: inherit;
+}
+
+.percha-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.percha-number {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.no-results {
+  text-align: center;
+  padding: 3rem;
+  color: #7f8c8d;
+}
+
+.no-results-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.error-message {
+  background-color: #ffecec;
+  color: #e74c3c;
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-top: 1rem;
+  border: 1px solid #ffc9c9;
+}
+
+/* Loading spinner reuse del CSS anterior */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+}
+
+.loading-spinner {
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes doorOpen {
+  0% { transform: perspective(500px) rotateY(0); }
+  50% { transform: perspective(500px) rotateY(-90deg); }
+  100% { transform: perspective(500px) rotateY(0); }
+}
+
+.percha-card:active {
+  animation: doorOpen 0.8s ease;
+}

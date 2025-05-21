@@ -1,11 +1,11 @@
-import * as Yup from 'yup';
-import { useFormik } from 'formik';
-import { toast } from 'react-toastify';
-import type { Cliente } from '../../Types/Cliente';
-import { useEffect, useState } from 'react';
-import { ClienteService } from '../../Services/ClienteService';
-import { ModalType } from '../../enums/ModalTypes';
-import { Button, Form, FormLabel, Modal } from 'react-bootstrap';
+import * as Yup from "yup";
+import { useFormik } from "formik";
+import { toast } from "react-toastify";
+import type { Cliente } from "../../Types/Cliente";
+import { useEffect, useState } from "react";
+import { ClienteService } from "../../Services/ClienteService";
+import { ModalType } from "../../enums/ModalTypes";
+import { Button, Form, FormLabel, Modal } from "react-bootstrap";
 
 type ClienteModalProps = {
   tituloModal: string;
@@ -26,104 +26,137 @@ const ClienteModal = ({
 }: ClienteModalProps) => {
   const [clientes, setClientes] = useState<Cliente[]>([]);
 
-  const getCurrentDate = () => new Date().toISOString().split('T')[0];
-
   useEffect(() => {
-    const fetchDatos = async () => {
+    const fetchClientes = async () => {
       try {
-        const datosClientes = await ClienteService.getClientes();
-        setClientes(datosClientes);
+        const datos = await ClienteService.getClientes();
+        setClientes(datos);
       } catch (error) {
         console.error(error);
-        toast.error('Error al cargar clientes');
       }
     };
-    fetchDatos();
+    fetchClientes();
   }, []);
 
-  const validationSchema = () => {
-    return Yup.object().shape({
-      id: Yup.number().integer().min(0),
-      nombreCliente: Yup.string().required('El nombre es requerido'),
-      dniCliente: Yup.number().required('El DNI es requerido').positive().integer(),
-      telefonoCliente: Yup.number().required('El teléfono es requerido').positive().integer(),
-      mailCliente: Yup.string().email('Email inválido').required('El email es requerido'),
-      fechaAltaCliente: Yup.string().required('La fecha de alta es requerida'),
-      fechaModificacionCliente: Yup.string().nullable(),
-    });
-  };
-
-  const initialValues = {
-    ...cliente,
-    fechaAltaCliente: cliente.fechaAltaCliente || getCurrentDate(),
-    fechaModificacionCliente: modalType === ModalType.UPDATE ? getCurrentDate() : cliente.fechaModificacionCliente || '',
-  };
+  const validationSchema = Yup.object().shape({
+    nombreCliente: Yup.string().required("El nombre es obligatorio"),
+    dniCliente: Yup.number()
+      .min(1)
+      .required("El DNI es obligatorio"),
+    telefonoCliente: Yup.number().required("El teléfono es obligatorio"),
+    mailCliente: Yup.string().email("Email inválido").required("Email es obligatorio"),
+  });
 
   const formik = useFormik({
-    initialValues,
-    validationSchema: validationSchema(),
-    onSubmit: (cliente: Cliente) => handleSaveUpdate(cliente),
+    initialValues: cliente,
+    validationSchema,
+    validateOnChange: true,
+    validateOnBlur: true,
+    onSubmit: (values: Cliente) => handleSaveUpdate(values),
+    enableReinitialize: true,
   });
 
   const handleDelete = async () => {
     try {
-      await ClienteService.deleteCliente(cliente.id);
-      toast.success('Cliente borrado', { position: 'top-center' });
+      const fechaBaja = new Date().toISOString().split("T")[0];
+
+      await ClienteService.updateCliente(cliente.id, {
+        ...cliente,
+        fechaHoraBajaCliente: fechaBaja,
+        fechaHoraModificacionCliente: fechaBaja,
+      });
+
+      toast.success("Cliente dado de baja");
       onHide();
       refreshData((prev) => !prev);
     } catch (error) {
-      console.error(error);
-      toast.error('Error al borrar cliente');
+      toast.error("Error al dar de baja el cliente");
     }
   };
 
-  const handleSaveUpdate = async (formData: Cliente) => {
+  const handleRestore = async () => {
     try {
-      const datosParaGuardar = {
-        ...formData,
-        fechaAltaCliente: modalType === ModalType.UPDATE ? cliente.fechaAltaCliente : getCurrentDate(),
-        fechaModificacionCliente: modalType === ModalType.UPDATE ? getCurrentDate() : null,
-      };
+      const fechaMod = new Date().toISOString().split("T")[0];
 
-      if (modalType === ModalType.CREATE) {
-        await ClienteService.createCliente(datosParaGuardar);
-      } else {
-        await ClienteService.updateCliente(formData.id, datosParaGuardar);
-      }
+      await ClienteService.updateCliente(cliente.id, {
+        ...cliente,
+        fechaHoraBajaCliente: null,
+        fechaHoraModificacionCliente: fechaMod,
+      });
 
-      toast.success(
-        modalType === ModalType.CREATE ? 'Cliente creado con éxito' : 'Cliente actualizado con éxito',
-        { position: 'top-center' }
-      );
-
+      toast.success("Cliente dado de alta");
       onHide();
       refreshData((prev) => !prev);
     } catch (error) {
-      console.error('Error:', error);
-      toast.error('Ha ocurrido un error');
+      toast.error("Error al dar de alta el cliente");
+    }
+  };
+
+  const handleSaveUpdate = async (values: Cliente) => {
+    try {
+      const isNew = values.id === 0;
+
+      // Validar dni único para nuevo cliente
+      if (isNew) {
+        const dniRepetido = clientes.find((c) => c.dniCliente === values.dniCliente);
+        if (dniRepetido) {
+          toast.error("El DNI ya está registrado");
+          return;
+        }
+      }
+
+      if (!isNew) {
+        values.fechaHoraModificacionCliente = new Date().toISOString().split("T")[0];
+      } else {
+        values.fechaHoraAltaCliente = new Date().toISOString().split("T")[0];
+      }
+
+      const action = isNew
+        ? ClienteService.createCliente(values)
+        : ClienteService.updateCliente(values.id, values);
+      await action;
+
+      toast.success(isNew ? "Cliente creado" : "Cliente actualizado");
+      onHide();
+      refreshData((prev) => !prev);
+    } catch (error) {
+      toast.error("Error al guardar el cliente");
     }
   };
 
   return (
     <>
-      {modalType === ModalType.DELETE ? (
+      {(modalType === ModalType.DELETE || modalType === ModalType.RESTORE) ? (
         <Modal show={showModal} centered backdrop="static">
           <Modal.Header closeButton onClick={onHide}>
             <Modal.Title>{tituloModal}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <p>
-              ¿Está seguro que desea eliminar el cliente?<br />
-              <strong>{cliente.nombreCliente}</strong>?
-            </p>
+            {modalType === ModalType.DELETE ? (
+              <p>
+                ¿Está seguro que desea dar de <strong>baja</strong> el cliente con ID:{" "}
+                <strong>{cliente.id}</strong>?
+              </p>
+            ) : (
+              <p>
+                ¿Está seguro que desea <strong>dar de alta</strong> el cliente con ID:{" "}
+                <strong>{cliente.id}</strong>?
+              </p>
+            )}
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>
               Cancelar
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Borrar
-            </Button>
+            {modalType === ModalType.DELETE ? (
+              <Button variant="danger" onClick={handleDelete}>
+                Dar de Baja
+              </Button>
+            ) : (
+              <Button variant="success" onClick={handleRestore}>
+                Dar de Alta
+              </Button>
+            )}
           </Modal.Footer>
         </Modal>
       ) : (
@@ -133,27 +166,29 @@ const ClienteModal = ({
           </Modal.Header>
           <Modal.Body>
             <Form onSubmit={formik.handleSubmit}>
-              <Form.Group controlId="formNombreCliente" className="mt-3">
-                <Form.Label>Nombre del cliente:</Form.Label>
+              <Form.Group className="mt-3">
+                <FormLabel>Nombre</FormLabel>
                 <Form.Control
                   name="nombreCliente"
                   type="text"
-                  value={formik.values.nombreCliente || ''}
+                  value={formik.values.nombreCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  isInvalid={!!formik.errors.nombreCliente && formik.touched.nombreCliente}
+                  isInvalid={
+                    !!formik.errors.nombreCliente && formik.touched.nombreCliente
+                  }
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.nombreCliente}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formDniCliente" className="mt-3">
-                <Form.Label>DNI del cliente:</Form.Label>
+              <Form.Group className="mt-3">
+                <FormLabel>DNI</FormLabel>
                 <Form.Control
                   name="dniCliente"
                   type="number"
-                  value={formik.values.dniCliente || ''}
+                  value={formik.values.dniCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   isInvalid={!!formik.errors.dniCliente && formik.touched.dniCliente}
@@ -163,27 +198,29 @@ const ClienteModal = ({
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formTelefonoCliente" className="mt-3">
-                <Form.Label>Teléfono del cliente:</Form.Label>
+              <Form.Group className="mt-3">
+                <FormLabel>Teléfono</FormLabel>
                 <Form.Control
                   name="telefonoCliente"
                   type="number"
-                  value={formik.values.telefonoCliente || ''}
+                  value={formik.values.telefonoCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  isInvalid={!!formik.errors.telefonoCliente && formik.touched.telefonoCliente}
+                  isInvalid={
+                    !!formik.errors.telefonoCliente && formik.touched.telefonoCliente
+                  }
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.telefonoCliente}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formMailCliente" className="mt-3">
-                <Form.Label>Email del cliente:</Form.Label>
+              <Form.Group className="mt-3">
+                <FormLabel>Email</FormLabel>
                 <Form.Control
                   name="mailCliente"
                   type="email"
-                  value={formik.values.mailCliente || ''}
+                  value={formik.values.mailCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   isInvalid={!!formik.errors.mailCliente && formik.touched.mailCliente}
@@ -193,44 +230,14 @@ const ClienteModal = ({
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group controlId="formFechaAltaCliente" className="mt-3">
-                <FormLabel>Fecha Alta:</FormLabel>
-                <Form.Control
-                  name="fechaAltaCliente"
-                  type="date"
-                  value={formik.values.fechaAltaCliente || getCurrentDate()}
-                  onChange={(e) => {}}
-                  disabled
-                  onBlur={formik.handleBlur}
-                  isInvalid={!!formik.errors.fechaAltaCliente && formik.touched.fechaAltaCliente}
-                />
-                <Form.Control.Feedback type="invalid">
-                  {formik.errors.fechaAltaCliente}
-                </Form.Control.Feedback>
-              </Form.Group>
-
-              {modalType === ModalType.UPDATE && (
-                <Form.Group controlId="formFechaModificacionCliente" className="mt-3">
-                  <FormLabel>Fecha Modificación:</FormLabel>
-                  <Form.Control
-                    name="fechaModificacionCliente"
-                    type="date"
-                    value={formik.values.fechaModificacionCliente || ''}
-                    onChange={formik.handleChange}
-                    disabled
-                    onBlur={formik.handleBlur}
-                  />
-                </Form.Group>
-              )}
-
-              <Modal.Footer className="mt-4">
-                <Button variant="secondary" onClick={onHide}>
+              <div className="d-flex justify-content-end mt-4">
+                <Button variant="secondary" onClick={onHide} className="me-2">
                   Cancelar
                 </Button>
-                <Button variant="primary" type="submit" disabled={!formik.isValid}>
-                  Guardar
+                <Button type="submit" variant="primary">
+                  {modalType === ModalType.CREATE ? "Crear" : "Actualizar"}
                 </Button>
-              </Modal.Footer>
+              </div>
             </Form>
           </Modal.Body>
         </Modal>

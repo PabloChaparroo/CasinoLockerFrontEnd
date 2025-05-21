@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Table } from 'react-bootstrap';
-import { ModalType } from '../../enums/ModalTypes';
-import Loader from '../Loader/Loader';
-import EditButton from '../EditButton/EditButton';
-import DeleteButton from '../DeleteButton/DeleteButton';
-import type { Cliente } from '../../Types/Cliente';
-import { ClienteService } from '../../Services/ClienteService';
-import { toast } from 'react-toastify';
-import ClienteModal from '../ClienteModal/ClienteModal';
+import React, { useEffect, useState } from "react";
+import { Button, Table, Form } from "react-bootstrap";
+import { ModalType } from "../../enums/ModalTypes";
+import Loader from "../Loader/Loader";
+import EditButton from "../EditButton/EditButton";
+import DeleteButton from "../DeleteButton/DeleteButton";
+import RestoreButton from "../RestoreButton/RestoreButton"; // crea este componente si no lo tienes
+import type { Cliente } from "../../Types/Cliente";
+import { ClienteService } from "../../Services/ClienteService";
+import { toast } from "react-toastify";
+import ClienteModal from "../ClienteModal/ClienteModal";
 
 const ClienteTabla = () => {
-  const initializeNewCliente = (): Cliente => {
-    return {
-      id: 0,
-      nombreCliente: '',
-      dniCliente: 0,
-      telefonoCliente: 0,
-      mailCliente: '',
-      fechaAltaCliente: null,
-      fechaModificacionCliente: null,
-      fechaBajaCliente: null,
-    };
-  };
+  const initializeNewCliente = (): Cliente => ({
+    id: 0,
+    nombreCliente: "",
+    dniCliente: 0,
+    telefonoCliente: 0,
+    mailCliente: "",
+    fechaHoraAltaCliente: null,
+    fechaHoraModificacionCliente: null,
+    fechaHoraBajaCliente: null,
+  });
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(ModalType.NONE);
-  const [tituloModal, setTituloModal] = useState('');
+  const [tituloModal, setTituloModal] = useState("");
   const [cliente, setCliente] = useState<Cliente>(initializeNewCliente);
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [refreshData, setRefreshData] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
 
   useEffect(() => {
     const fetchDatos = async () => {
@@ -38,7 +38,7 @@ const ClienteTabla = () => {
         setClientes(datos);
         setIsLoading(false);
       } catch (error) {
-        toast.error('Ha ocurrido un error al cargar los clientes');
+        toast.error("Ha ocurrido un error al cargar los clientes");
       }
     };
     fetchDatos();
@@ -51,6 +51,11 @@ const ClienteTabla = () => {
     setTituloModal(tituloModal);
   };
 
+  // Filtrar clientes según checkbox showDeleted
+  const clientesFiltrados = clientes.filter((c) =>
+    showDeleted ? true : !c.fechaHoraBajaCliente
+  );
+
   return (
     <>
       <div className="table-container">
@@ -60,13 +65,22 @@ const ClienteTabla = () => {
             <Button
               className="action-btn"
               onClick={() =>
-                handleClick('Crear Cliente', initializeNewCliente(), ModalType.CREATE)
+                handleClick("Crear Cliente", initializeNewCliente(), ModalType.CREATE)
               }
             >
               Nuevo Cliente
             </Button>
           </div>
         </div>
+
+        <Form.Check
+          type="checkbox"
+          label="Mostrar clientes dados de baja"
+          checked={showDeleted}
+          onChange={() => setShowDeleted(!showDeleted)}
+          className="mostrar-checkbox"
+        />
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -86,31 +100,37 @@ const ClienteTabla = () => {
                 </tr>
               </thead>
               <tbody>
-                {clientes.map((cliente) => (
+                {clientesFiltrados.map((cliente) => (
                   <tr key={cliente.id}>
                     <td>{cliente.id}</td>
                     <td>{cliente.nombreCliente}</td>
                     <td>{cliente.dniCliente}</td>
                     <td>{cliente.telefonoCliente}</td>
                     <td>{cliente.mailCliente}</td>
-                    <td>{cliente.fechaAltaCliente}</td>
-                    <td>{cliente.fechaModificacionCliente}</td>
-                    <td>{cliente.fechaBajaCliente}</td>
+                    <td>{cliente.fechaHoraAltaCliente || "-"}</td>
+                    <td>{cliente.fechaHoraModificacionCliente || "-"}</td>
+                    <td>{cliente.fechaHoraBajaCliente || "-"}</td>
                     <td>
-                      <span className="me-2">
-                        <EditButton
+                      {!cliente.fechaHoraBajaCliente ? (
+                        <>
+                          <EditButton
+                            onClick={() =>
+                              handleClick("Editar Cliente", cliente, ModalType.UPDATE)
+                            }
+                          />
+                          <DeleteButton
+                            onClick={() =>
+                              handleClick("Dar de Baja Cliente", cliente, ModalType.DELETE)
+                            }
+                          />
+                        </>
+                      ) : (
+                        <RestoreButton
                           onClick={() =>
-                            handleClick('Editar Cliente', cliente, ModalType.UPDATE)
+                            handleClick("Dar de Alta Cliente", cliente, ModalType.RESTORE)
                           }
                         />
-                      </span>
-                      <span>
-                        <DeleteButton
-                          onClick={() =>
-                            handleClick('Borrar Cliente', cliente, ModalType.DELETE)
-                          }
-                        />
-                      </span>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -120,16 +140,14 @@ const ClienteTabla = () => {
         )}
       </div>
 
-      {showModal && (
-        <ClienteModal
-          tituloModal={tituloModal}
-          showModal={showModal}
-          onHide={() => setShowModal(false)}
-          modalType={modalType}
-          cliente={cliente}
-          refreshData={setRefreshData}
-        />
-      )}
+      <ClienteModal
+        tituloModal={tituloModal}
+        showModal={showModal}
+        onHide={() => setShowModal(false)}
+        modalType={modalType}
+        cliente={cliente}
+        refreshData={setRefreshData}
+      />
     </>
   );
 };

@@ -5,7 +5,7 @@ export interface Cliente{
     dniCliente: number;
     telefonoCliente: number;
     mailCliente: string;
-    fechaAltaCliente: string | null;
-    fechaModificacionCliente: string | null;
-    fechaBajaCliente: string | null;
+    fechaHoraAltaCliente: string | null;
+    fechaHoraModificacionCliente: string | null;
+    fechaHoraBajaCliente: string | null;
 }
