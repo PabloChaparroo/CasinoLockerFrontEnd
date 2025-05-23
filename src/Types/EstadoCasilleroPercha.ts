@@ -7,6 +7,6 @@ export interface EstadoCasilleroPercha{
     fechaModificacionEstadoCasilleroPercha: string | null;
     fechaBajaEstadoCasilleroPercha: string | null;
     colorEstadoCasilleroPercha: string;
-
+    reservable: boolean;
 
 }
