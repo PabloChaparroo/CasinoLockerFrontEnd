@@ -1,79 +1,87 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import type { EstadoCasilleroPercha } from '../../Types/EstadoCasilleroPercha';
 import { EstadoCasilleroPerchaService } from '../../Services/EstadoCasilleroPerchaService';
 import { toast } from 'react-toastify';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Table, Form } from 'react-bootstrap';
 import { ModalType } from '../../enums/ModalTypes';
 import Loader from '../Loader/Loader';
 import EditButton from '../EditButton/EditButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
+import RestoreButton from '../RestoreButton/RestoreButton';
 import AbmEstadoCasilleroPerchaModal from '../AbmEstadoCasilleroPerchaModal/AbmEstadoCasilleroPerchaModal';
-import './AbmEstadoCasilleroPercha.css';
+import './AbmEstadoCasilleroPerchaTabla.css';
 
 const AbmEstadoCasilleroPerchaTabla = () => {
-  const initializableNewEstadoCasilleroPercha = (): EstadoCasilleroPercha => {
-    return {
-      target: null,
-      id: 0,
-      nombreEstadoCasilleroPercha: "",
-      fechaAltaEstadoCasilleroPercha: "",
-      fechaModificacionEstadoCasilleroPercha: "",
-      fechaBajaEstadoCasilleroPercha: "",
-      colorEstadoCasilleroPercha: "#000000",
-      reservable: false
-    };
-  };
+  const initializableNewEstadoCasilleroPercha = (): EstadoCasilleroPercha => ({
+    id: 0,
+    nombreEstadoCasilleroPercha: "",
+    fechaAltaEstadoCasilleroPercha: "",
+    fechaModificacionEstadoCasilleroPercha: "",
+    fechaBajaEstadoCasilleroPercha: "",
+    colorEstadoCasilleroPercha: "#000000",
+    reservable: false
+  });
 
   const [showModal, setShowModal] = useState(false);
   const [modalType, setModalType] = useState(ModalType.NONE);
   const [tituloModal, setTituloModal] = useState("");
-
   const [estadoCasilleroPercha, setEstadoCasilleroPercha] = useState<EstadoCasilleroPercha>(initializableNewEstadoCasilleroPercha);
   const [estadosCasilleroPercha, setEstadosCasilleroPercha] = useState<EstadoCasilleroPercha[]>([]);
-
   const [isLoading, setIsLoading] = useState(true);
   const [refreshData, setRefreshData] = useState(false);
+  const [verDadosDeBaja, setVerDadosDeBaja] = useState(false);
+
+  const fetchDatos = async () => {
+    try {
+      const datos = await EstadoCasilleroPerchaService.getEstados();
+      setEstadosCasilleroPercha(datos);
+    } catch (error) {
+      toast.error("Ha ocurrido un error al cargar los estados");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDatos = async () => {
-      try {
-        const datos = await EstadoCasilleroPerchaService.getEstados();
-        setEstadosCasilleroPercha(datos);
-        setIsLoading(false);
-      } catch (error) {
-        toast.error("Ha ocurrido un error al cargar los estados");
-      }
-    };
     fetchDatos();
   }, [refreshData]);
 
-  const handleClick = (tituloModal: string, estado: EstadoCasilleroPercha, modalType: ModalType) => {
+  const handleClick = (tituloModal: string, estado: EstadoCasilleroPercha, modal: ModalType) => {
     setShowModal(true);
-    setModalType(modalType);
+    setModalType(modal);
     setEstadoCasilleroPercha(estado);
     setTituloModal(tituloModal);
   };
 
+  const estadosFiltrados = estadosCasilleroPercha.filter(estado =>
+    verDadosDeBaja ? true : estado.fechaBajaEstadoCasilleroPercha === null
+  );
+
   return (
     <>
       <div className="table-container">
-        <div className="table-header">
+        <div className="table-header d-flex justify-content-between align-items-center mb-2">
           <h4 className="table-title">ABM Estado Casillero/Percha</h4>
-          <div className="table-actions">
-            <Button
-              className="action-btn"
-              onClick={() =>
-                handleClick(
-                  'Crear Estado: ',
-                  initializableNewEstadoCasilleroPercha(),
-                  ModalType.CREATE
-                )
-              }
-            >
-              Nuevo Estado
-            </Button>
-          </div>
+          <Button
+            className="action-btn"
+            onClick={() =>
+              handleClick("Crear Estado", initializableNewEstadoCasilleroPercha(), ModalType.CREATE)
+            }
+          >
+            Nuevo Estado
+          </Button>
         </div>
+
+        <div className="checkbox-container mb-3">
+          <Form.Check
+            type="checkbox"
+            id="verDadosDeBaja"
+            label="Ver dados de baja"
+            checked={verDadosDeBaja}
+            onChange={() => setVerDadosDeBaja(prev => !prev)}
+          />
+        </div>
+
         {isLoading ? (
           <Loader />
         ) : (
@@ -87,18 +95,18 @@ const AbmEstadoCasilleroPerchaTabla = () => {
                   <th>Fecha Modificación</th>
                   <th>Fecha Baja</th>
                   <th>Color</th>
-                  <th>Reservable</th> {/* Nueva columna */}
+                  <th>Reservable</th>
                   <th>Acciones</th>
                 </tr>
               </thead>
               <tbody>
-                {estadosCasilleroPercha.map((estado) => (
+                {estadosFiltrados.map((estado) => (
                   <tr key={estado.id}>
                     <td>{estado.id}</td>
                     <td>{estado.nombreEstadoCasilleroPercha}</td>
                     <td>{estado.fechaAltaEstadoCasilleroPercha}</td>
                     <td>{estado.fechaModificacionEstadoCasilleroPercha}</td>
-                    <td>{estado.fechaBajaEstadoCasilleroPercha}</td>
+                    <td>{estado.fechaBajaEstadoCasilleroPercha || "-"}</td>
                     <td>
                       <div
                         className="color-box"
@@ -106,14 +114,21 @@ const AbmEstadoCasilleroPerchaTabla = () => {
                         title={estado.colorEstadoCasilleroPercha}
                       />
                     </td>
-                    <td>{estado.reservable ? "Sí" : "No"}</td> {/* Valor booleano como texto */}
+                    <td>{estado.reservable ? "Sí" : "No"}</td>
                     <td>
-                      <span className="me-2">
-                        <EditButton onClick={() => handleClick('Editar estado', estado, ModalType.UPDATE)} />
-                      </span>
-                      <span>
-                        <DeleteButton onClick={() => handleClick('Borrar estado', estado, ModalType.DELETE)} />
-                      </span>
+                      {estado.fechaBajaEstadoCasilleroPercha ? (
+                        // Aquí cambiamos ModalType.RESTORE por ModalType.DELETE para abrir modal confirmación restaurar
+                        <RestoreButton onClick={() => handleClick("Restaurar estado", estado, ModalType.DELETE)} />
+                      ) : (
+                        <>
+                          <span className="me-2">
+                            <EditButton onClick={() => handleClick("Editar estado", estado, ModalType.UPDATE)} />
+                          </span>
+                          <span>
+                            <DeleteButton onClick={() => handleClick("Borrar estado", estado, ModalType.DELETE)} />
+                          </span>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

@@ -2,10 +2,10 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import type { EstadoCasilleroPercha } from "../../Types/EstadoCasilleroPercha";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { EstadoCasilleroPerchaService } from "../../Services/EstadoCasilleroPerchaService";
 import { ModalType } from "../../enums/ModalTypes";
-import { Button, Form, FormLabel, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 
 type EstadoCasilleroPerchaModalProps = {
   tituloModal: string;
@@ -24,107 +24,134 @@ const AbmEstadoCasilleroPerchaModal = ({
   estadoCasilleroPercha,
   refreshData
 }: EstadoCasilleroPerchaModalProps) => {
-  const getCurrentDate = () => new Date().toISOString().split("T")[0];
 
-  const validationSchema = () =>
-    Yup.object().shape({
-      nombreEstadoCasilleroPercha: Yup.string().required("El nombre es requerido"),
-      colorEstadoCasilleroPercha: Yup.string().required("El color es requerido"),
-      fechaAltaEstadoCasilleroPercha: Yup.string().required("La fecha de alta es requerida"),
-      reservable: Yup.boolean().required("Debe indicar si es reservable")
-    });
+  const validationSchema = Yup.object().shape({
+    nombreEstadoCasilleroPercha: Yup.string().required("El nombre es requerido"),
+    colorEstadoCasilleroPercha: Yup.string().required("El color es requerido"),
+    reservable: Yup.boolean().required("Debe indicar si es reservable")
+  });
 
   const initialValues = {
-    ...estadoCasilleroPercha,
-    fechaAltaEstadoCasilleroPercha: estadoCasilleroPercha.fechaAltaEstadoCasilleroPercha || getCurrentDate(),
-    fechaModificacionEstadoCasilleroPercha:
-      modalType === ModalType.UPDATE ? getCurrentDate() : estadoCasilleroPercha.fechaModificacionEstadoCasilleroPercha || ""
+    nombreEstadoCasilleroPercha: estadoCasilleroPercha.nombreEstadoCasilleroPercha || "",
+    colorEstadoCasilleroPercha: estadoCasilleroPercha.colorEstadoCasilleroPercha || "#000000",
+    reservable: estadoCasilleroPercha.reservable || false,
   };
 
   const formik = useFormik({
     initialValues,
-    validationSchema: validationSchema(),
-    onSubmit: (estado: EstadoCasilleroPercha) => handleSaveUpdate(estado)
+    validationSchema,
+    enableReinitialize: true,
+    onSubmit: (formData) => handleSaveUpdate(formData)
   });
 
   const handleDelete = async () => {
     try {
-      await EstadoCasilleroPerchaService.deleteEstado(estadoCasilleroPercha.id);
-      toast.success("Estado borrado", { position: "top-center" });
+      await EstadoCasilleroPerchaService.darDeBaja(estadoCasilleroPercha.id);
+      toast.success("Estado dado de baja", { position: "top-center" });
       onHide();
       refreshData(prev => !prev);
     } catch (error) {
       console.error(error);
-      toast.error("Error al borrar estado");
+      toast.error("Error al dar de baja el estado");
     }
   };
 
-  const handleSaveUpdate = async (formData: EstadoCasilleroPercha) => {
+  const handleRestore = async () => {
     try {
-      const datosParaGuardar = {
-        ...formData,
-        fechaAltaEstadoCasilleroPercha:
-          modalType === ModalType.UPDATE
-            ? estadoCasilleroPercha.fechaAltaEstadoCasilleroPercha
-            : getCurrentDate(),
-        fechaModificacionEstadoCasilleroPercha: modalType === ModalType.UPDATE ? getCurrentDate() : null
-      };
-
-      if (modalType === ModalType.CREATE) {
-        await EstadoCasilleroPerchaService.createEstado(datosParaGuardar);
-      } else {
-        await EstadoCasilleroPerchaService.updateEstado(formData.id, datosParaGuardar);
-      }
-
-      toast.success(
-        modalType === ModalType.CREATE ? "Estado creado con éxito" : "Estado actualizado con éxito",
-        { position: "top-center" }
-      );
+      await EstadoCasilleroPerchaService.restaurar(estadoCasilleroPercha.id);
+      toast.success("Estado restaurado", { position: "top-center" });
       onHide();
       refreshData(prev => !prev);
     } catch (error) {
-      console.error("Error:", error);
-      toast.error("Ha ocurrido un error");
+      console.error(error);
+      toast.error("Error al restaurar el estado");
     }
   };
+
+const handleSaveUpdate = async (formData: typeof initialValues) => {
+  try {
+    if (modalType === ModalType.CREATE) {
+      const nuevoEstado = {
+        ...formData,
+        fechaAltaEstadoCasilleroPercha: new Date().toISOString().split("T")[0],
+        fechaBajaEstadoCasilleroPercha: null,
+      };
+      await EstadoCasilleroPerchaService.createEstado(nuevoEstado);
+      toast.success("Estado creado con éxito", { position: "top-center" });
+    } else if (modalType === ModalType.UPDATE) {
+      // Solo los campos editables + id, no tocar fechas
+      const updatedEstado = {
+        id: estadoCasilleroPercha.id,
+        nombreEstadoCasilleroPercha: formData.nombreEstadoCasilleroPercha,
+        colorEstadoCasilleroPercha: formData.colorEstadoCasilleroPercha,
+        reservable: formData.reservable,
+        // No enviamos fechaAlta ni fechaModificacion
+      };
+      await EstadoCasilleroPerchaService.updateEstado(estadoCasilleroPercha.id!, updatedEstado);
+      toast.success("Estado actualizado con éxito", { position: "top-center" });
+    }
+    onHide();
+    refreshData(prev => !prev);
+  } catch (error) {
+    console.error("Error:", error);
+    toast.error("Ha ocurrido un error");
+  }
+};
+
+  useEffect(() => {
+    if (modalType === ModalType.UPDATE || modalType === ModalType.CREATE) {
+      formik.resetForm();
+    }
+  }, [modalType, estadoCasilleroPercha]);
 
   return (
     <>
       {modalType === ModalType.DELETE ? (
-        <Modal show={showModal} centered backdrop="static">
-          <Modal.Header closeButton onClick={onHide}>
-            <Modal.Title>{tituloModal}</Modal.Title>
+        <Modal show={showModal} onHide={onHide} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {estadoCasilleroPercha.fechaBajaEstadoCasilleroPercha
+                ? "Confirmar Restauración"
+                : "Confirmar Baja"}
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <p>
-              ¿Está seguro que desea eliminar el estado?<br />
-              <strong>{estadoCasilleroPercha.id}</strong>?
+              {estadoCasilleroPercha.fechaBajaEstadoCasilleroPercha
+                ? `¿Está seguro que desea restaurar el estado "${estadoCasilleroPercha.nombreEstadoCasilleroPercha}"?`
+                : `¿Está seguro que desea dar de baja el estado "${estadoCasilleroPercha.nombreEstadoCasilleroPercha}"?`}
             </p>
           </Modal.Body>
           <Modal.Footer>
             <Button variant="secondary" onClick={onHide}>
               Cancelar
             </Button>
-            <Button variant="danger" onClick={handleDelete}>
-              Borrar
+            <Button
+              variant={estadoCasilleroPercha.fechaBajaEstadoCasilleroPercha ? "success" : "danger"}
+              onClick={
+                estadoCasilleroPercha.fechaBajaEstadoCasilleroPercha ? handleRestore : handleDelete
+              }
+            >
+              {estadoCasilleroPercha.fechaBajaEstadoCasilleroPercha
+                ? "Confirmar Restauración"
+                : "Confirmar Baja"}
             </Button>
           </Modal.Footer>
         </Modal>
       ) : (
-        <Modal show={showModal} centered backdrop="static">
-          <Modal.Header closeButton onClick={onHide}>
+        <Modal show={showModal} onHide={onHide} centered>
+          <Modal.Header closeButton>
             <Modal.Title>{tituloModal}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <Form onSubmit={formik.handleSubmit}>
-              <Form.Group className="mt-3">
-                <Form.Label>Nombre del estado:</Form.Label>
+            <Form noValidate onSubmit={formik.handleSubmit}>
+              <Form.Group className="mb-3" controlId="nombreEstadoCasilleroPercha">
+                <Form.Label>Nombre Estado</Form.Label>
                 <Form.Control
-                  name="nombreEstadoCasilleroPercha"
                   type="text"
-                  value={formik.values.nombreEstadoCasilleroPercha || ""}
+                  name="nombreEstadoCasilleroPercha"
+                  value={formik.values.nombreEstadoCasilleroPercha}
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
                   isInvalid={!!formik.errors.nombreEstadoCasilleroPercha && formik.touched.nombreEstadoCasilleroPercha}
                 />
                 <Form.Control.Feedback type="invalid">
@@ -132,84 +159,38 @@ const AbmEstadoCasilleroPerchaModal = ({
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className="mt-3">
-                <Form.Label>Color del estado:</Form.Label>
+              <Form.Group className="mb-3" controlId="colorEstadoCasilleroPercha">
+                <Form.Label>Color</Form.Label>
                 <Form.Control
-                  name="colorEstadoCasilleroPercha"
                   type="color"
-                  value={formik.values.colorEstadoCasilleroPercha || "#000000"}
+                  name="colorEstadoCasilleroPercha"
+                  value={formik.values.colorEstadoCasilleroPercha}
                   onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  isInvalid={!!formik.errors.colorEstadoCasilleroPercha && formik.touched.colorEstadoCasilleroPercha}
-                  style={{ height: "40px", padding: "2px" }}
+                  title={formik.values.colorEstadoCasilleroPercha}
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.colorEstadoCasilleroPercha}
                 </Form.Control.Feedback>
               </Form.Group>
 
-              <Form.Group className="mt-3">
-                <Form.Label>Fecha Alta:</Form.Label>
-                <Form.Control
-                  name="fechaAltaEstadoCasilleroPercha"
-                  type="date"
-                  value={formik.values.fechaAltaEstadoCasilleroPercha || getCurrentDate()}
-                  disabled
+              <Form.Group className="mb-3" controlId="reservable">
+                <Form.Check
+                  type="checkbox"
+                  label="Reservable"
+                  name="reservable"
+                  checked={formik.values.reservable}
+                  onChange={formik.handleChange}
                 />
               </Form.Group>
 
-              {modalType === ModalType.UPDATE && (
-                <Form.Group className="mt-3">
-                  <Form.Label>Fecha Modificación:</Form.Label>
-                  <Form.Control
-                    name="fechaModificacionEstadoCasilleroPercha"
-                    type="date"
-                    value={formik.values.fechaModificacionEstadoCasilleroPercha || ""}
-                    disabled
-                  />
-                </Form.Group>
-              )}
-
-                <Form.Group className="mt-3">
-                <Form.Label>¿Es reservable?</Form.Label>
-                <br />
-                <label
-                    htmlFor="reservable-checkbox"
-                    style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    padding: "6px 12px",
-                    borderRadius: "4px",
-                    backgroundColor: "#0d6efd",  // fondo azul relleno
-                    cursor: "pointer",
-                    userSelect: "none",
-                    color: "white",             // texto blanco
-                    border: "1.5px solid #0d6efd", // borde mismo azul para definición
-                    }}
-                >
-                    <Form.Check
-                    id="reservable-checkbox"
-                    name="reservable"
-                    type="checkbox"
-                    checked={formik.values.reservable}
-                    onChange={formik.handleChange}
-                    style={{
-                        accentColor: "white",   // checkbox blanco para que combine
-                        marginRight: "8px",
-                    }}
-                    />
-                    Reservable
-                </label>
-                </Form.Group>
-
-              <Modal.Footer className="mt-4">
-                <Button variant="secondary" onClick={onHide}>
+              <div className="d-flex justify-content-end">
+                <Button variant="secondary" onClick={onHide} className="me-2">
                   Cancelar
                 </Button>
-                <Button variant="primary" type="submit" disabled={!formik.isValid}>
-                  Guardar
+                <Button variant="primary" type="submit">
+                  {modalType === ModalType.CREATE ? "Crear" : "Actualizar"}
                 </Button>
-              </Modal.Footer>
+              </div>
             </Form>
           </Modal.Body>
         </Modal>
