@@ -130,6 +130,7 @@ const CasillerosPages = () => {
                   <div
                     key={casillero.id}
                     className="casillero-card"
+                    
                     style={{
                       backgroundColor: casillero.colorEstado,
                       color: getContrastColor(casillero.colorEstado),
