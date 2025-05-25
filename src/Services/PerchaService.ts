@@ -2,8 +2,8 @@ import type { Percha } from '../Types/Percha';
 const BASE_URL = 'http://localhost:8080';
 
 export const PerchaService = {
-    getPerchas: async (): Promise<Percha[]> => {
-        const response = await fetch(`${BASE_URL}/api/perchas`);
+    getPerchas: async (showDeleted: boolean = false): Promise<Percha[]> => {
+        const response = await fetch(`${BASE_URL}/api/perchas?showDeleted=${showDeleted}`);
         return await response.json();
     },
 
