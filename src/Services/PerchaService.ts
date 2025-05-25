@@ -4,39 +4,53 @@ const BASE_URL = 'http://localhost:8080';
 export const PerchaService = {
     getPerchas: async (): Promise<Percha[]> => {
         const response = await fetch(`${BASE_URL}/api/perchas`);
-        const data = await response.json();
-        return data;
+        return await response.json();
     },
 
     getPercha: async (id: number): Promise<Percha> => {
         const response = await fetch(`${BASE_URL}/api/perchas/${id}`);
-        const data = await response.json();
-        return data;
+        return await response.json();
     },
 
     createPercha: async (percha: Percha): Promise<Percha> => {
         const response = await fetch(`${BASE_URL}/api/perchas`, {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(percha)
+            body: JSON.stringify({
+                numeroPercha: percha.numeroPercha,
+                estadoCasilleroPercha: percha.estadoCasilleroPercha,
+            }),
         });
-        const data = await response.json();
-        return data;
+        return await response.json();
     },
 
     updatePercha: async (id: number, percha: Percha): Promise<Percha> => {
         const response = await fetch(`${BASE_URL}/api/perchas/${id}`, {
             method: "PUT",
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(percha)
+            body: JSON.stringify({
+                numeroPercha: percha.numeroPercha,
+                estadoCasilleroPercha: percha.estadoCasilleroPercha,
+            }),
         });
-        const data = await response.json();
-        return data;
+        return await response.json();
     },
 
     deletePercha: async (id: number): Promise<void> => {
-        await fetch(`${BASE_URL}/api/perchas/${id}`, {
-            method: "DELETE"
+        await fetch(`${BASE_URL}/api/perchas/${id}`, { method: "DELETE" });
+    },
+
+    darDeBaja: async (id: number): Promise<Percha> => {
+        const response = await fetch(`${BASE_URL}/api/perchas/${id}/baja`, {
+            method: "PUT",
         });
+        return await response.json();
+    },
+
+    darDeAlta: async (id: number): Promise<Percha> => {
+        const response = await fetch(`${BASE_URL}/api/perchas/${id}/alta`, {
+            method: "PUT",
+        });
+        return await response.json();
     },
 };

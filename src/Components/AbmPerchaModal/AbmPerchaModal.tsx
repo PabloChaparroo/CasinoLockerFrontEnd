@@ -62,78 +62,37 @@ const AbmPerchaModal = ({
   });
 
   const handleDelete = async () => {
-    try {
-      const fechaBaja = new Date().toISOString().split("T")[0];
+  try {
+    await PerchaService.darDeBaja(percha.id);
+    toast.success("Percha dada de baja");
+    onHide();
+    refreshData((prev) => !prev);
+  } catch (error) {
+    toast.error("Error al dar de baja la percha");
+  }
+};
 
-      const estadoBaja = estados.find(
-        (e) => e.nombreEstadoCasilleroPercha === "Dado_de_baja"
-      );
-
-      if (!estadoBaja) {
-        toast.error('No se encontró el estado "Dado_de_baja"');
-        return;
-      }
-
-      await PerchaService.updatePercha(percha.id, {
-        ...percha,
-        fechaBajaPercha: fechaBaja,
-        fechaModificacionPercha: fechaBaja,
-        estadoCasilleroPercha: estadoBaja,
-      });
-
-      toast.success("Percha dada de baja");
-      onHide();
-      refreshData((prev) => !prev);
-    } catch (error) {
-      toast.error("Error al dar de baja la percha");
-    }
-  };
-
-  const handleRestore = async () => {
-    try {
-      const fechaMod = new Date().toISOString().split("T")[0];
-
-      const estadoDisponible = estados.find(
-        (e) => e.nombreEstadoCasilleroPercha === "Disponible"
-      );
-
-      if (!estadoDisponible) {
-        toast.error('No se encontró el estado "Disponible"');
-        return;
-      }
-
-      await PerchaService.updatePercha(percha.id, {
-        ...percha,
-        fechaBajaPercha: "",
-        fechaModificacionPercha: fechaMod,
-        estadoCasilleroPercha: estadoDisponible,
-      });
-
-      toast.success("Percha dada de alta");
-      onHide();
-      refreshData((prev) => !prev);
-    } catch (error) {
-      toast.error("Error al dar de alta la percha");
-    }
-  };
+const handleRestore = async () => {
+  try {
+    await PerchaService.darDeAlta(percha.id);
+    toast.success("Percha dada de alta");
+    onHide();
+    refreshData((prev) => !prev);
+  } catch (error) {
+    toast.error("Error al dar de alta la percha");
+  }
+};
 
   const handleSaveUpdate = async (values: Percha) => {
     try {
       const isNew = values.id === 0;
 
-      if (isNew) {
-        const chequearPercha = perchas.find(
-          (p) => p.numeroPercha === values.numeroPercha
-        );
-        if (chequearPercha) {
-          toast.error("Numero de percha ocupada");
-          return;
-        }
-
-        // Asignar la fecha de alta automáticamente al crear
-        values.fechaAltaPercha = new Date().toISOString().split("T")[0];
-      } else {
-        values.fechaModificacionPercha = new Date().toISOString().split("T")[0];
+      const chequearPercha = perchas.find(
+        (p) => p.numeroPercha === values.numeroPercha && p.id !== values.id
+      );
+      if (isNew && chequearPercha) {
+        toast.error("Número de percha ocupada");
+        return;
       }
 
       const action = isNew
