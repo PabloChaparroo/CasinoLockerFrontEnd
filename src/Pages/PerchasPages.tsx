@@ -4,7 +4,7 @@ import { EstadoCasilleroPerchaService } from '../Services/EstadoCasilleroPerchaS
 import { PerchaService } from '../Services/PerchaService';
 import './PerchasPages.css';
 import type { Percha } from '../Types/Percha';
-import { TbHanger } from 'react-icons/tb'; // Icono de percha
+import { TbHanger } from 'react-icons/tb';
 
 interface PerchaVisual extends Percha {
   estadoNombre: string;
@@ -28,7 +28,6 @@ const PerchasPages = () => {
           EstadoCasilleroPerchaService.getEstados()
         ]);
 
-        // Mapear estados a las perchas
         const perchasConColor: PerchaVisual[] = perchasData.map(percha => {
           const estado = percha.estadoCasilleroPercha;
           const estadoNombre = estado?.nombreEstadoCasilleroPercha || 'Sin estado';
@@ -55,20 +54,20 @@ const PerchasPages = () => {
 
   const filteredPerchas = useMemo(() => {
     let filtered = perchas;
-
     if (activeFilter !== "Todos") {
       filtered = filtered.filter(p => p.estadoNombre === activeFilter);
     }
-
     filtered.sort((a, b) => a.numeroPercha - b.numeroPercha);
-
     return filtered;
   }, [activeFilter, perchas]);
 
   if (error) {
     return (
       <div className="perchas-container">
-        <h1>Perchas</h1>
+        <div className="header-section">
+          <h1 className="page-title">Gestión de Perchas</h1>
+          <p className="page-subtitle">Sistema de administración de espacios</p>
+        </div>
         <div className="error-message">{error}</div>
       </div>
     );
@@ -76,50 +75,56 @@ const PerchasPages = () => {
 
   return (
     <div className="perchas-container">
-      <h1>Perchas</h1>
+      <div className="header-section">
+        <h1 className="page-title">Gestión de Perchas</h1>
+        <p className="page-subtitle">Sistema de administración de espacios</p>
+      </div>
 
-      <FilterBar
-        activeFilter={activeFilter}
-        onFilterChange={setActiveFilter}
-      />
+      <div className="page-container">
+        <FilterBar
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
 
-      {loading ? (
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Cargando inventario de perchas...</p>
-        </div>
-      ) : (
-        <div className="perchas-grid-container">
-          {filteredPerchas.length > 0 ? (
-            <div className="perchas-grid">
-              {filteredPerchas.map(percha => (
-                <div
-                  key={percha.id}
-                  className="percha-card"
-                  style={{
-                    backgroundColor: percha.colorEstado,
-                    color: getContrastColor(percha.colorEstado),
-                    border: `2px solid ${darkenColor(percha.colorEstado, 20)}`
-                  }}
-                >
-                  <TbHanger className="percha-icon" />
-                  <div className="percha-number">{percha.numeroPercha}</div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="no-results">
-              <TbHanger className="no-results-icon" />
-              <p>No se encontraron perchas con este filtro</p>
-            </div>
-          )}
-        </div>
-      )}
+        {loading ? (
+          <div className="loading-container">
+            <div className="loading-spinner"></div>
+            <p>Cargando inventario de perchas...</p>
+          </div>
+        ) : (
+          <div className="perchas-grid-container">
+            {filteredPerchas.length > 0 ? (
+              <div className="perchas-grid">
+                {filteredPerchas.map(percha => (
+                  <div
+                    key={percha.id}
+                    className="percha-card"
+                    style={{
+                      backgroundColor: percha.colorEstado,
+                      color: getContrastColor(percha.colorEstado),
+                      border: `2px solid ${darkenColor(percha.colorEstado, 20)}`
+                    }}
+                  >
+                    <div className="percha-icon-container">
+                      <TbHanger className="percha-icon" />
+                    </div>
+                    <div className="percha-number">{percha.numeroPercha}</div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-results">
+                <TbHanger className="no-results-icon" />
+                <p>No se encontraron perchas con este filtro</p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
 
-// Función para oscurecer un color
 function darkenColor(hex: string, percent: number): string {
   const num = parseInt(hex.replace("#", ""), 16);
   const amt = Math.round(2.55 * percent);
@@ -135,7 +140,6 @@ function darkenColor(hex: string, percent: number): string {
   ).toString(16).slice(1)}`;
 }
 
-// Función para texto contrastante
 function getContrastColor(hexColor: string): string {
   const hex = hexColor.replace('#', '');
   const r = parseInt(hex.substring(0, 2), 16);

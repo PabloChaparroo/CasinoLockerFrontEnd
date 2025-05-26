@@ -1,12 +1,10 @@
 
-export interface EstadoCasilleroPercha{
-    target: any;
-    id: number ;
-    nombreEstadoCasilleroPercha: string;
-    fechaAltaEstadoCasilleroPercha: string | null;
-    fechaModificacionEstadoCasilleroPercha: string | null;
-    fechaBajaEstadoCasilleroPercha: string | null;
-    colorEstadoCasilleroPercha: string;
-
-
-}
+export type EstadoCasilleroPercha = {
+  id?: number;
+  nombreEstadoCasilleroPercha: string;
+  colorEstadoCasilleroPercha: string;
+  reservable: boolean;
+  fechaAltaEstadoCasilleroPercha?: string | null;
+  fechaModificacionEstadoCasilleroPercha?: string | null;
+  fechaBajaEstadoCasilleroPercha?: string | null;
+};

@@ -5,10 +5,15 @@
 }
 
 .table-header {
+  display: block; /* importante que deje de ser flex para que el título quede en una línea sola */
+  margin-bottom: 0.25rem;
+}
+.table-actions {
+  /* Mantiene flex para que el checkbox quede a la izquierda y el botón a la derecha */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .table-title {
@@ -58,4 +63,13 @@
 .table td {
   text-align: center;
   vertical-align: middle !important;
+}
+.action-btn {
+  background-color: #0069d9;
+  border: none;
+  color: white;
+  white-space: nowrap;
+}
+.action-btn:hover {
+  background-color: #0056b3; /* Cambié un poco el hover para que se note */
 }
