@@ -8,8 +8,7 @@ import Loader from '../Loader/Loader';
 import EditButton from '../EditButton/EditButton';
 import DeleteButton from '../DeleteButton/DeleteButton';
 import AbmPerchaModal from '../AbmPerchaModal/AbmPerchaModal';
-import RestoreButton from "../RestoreButton/RestoreButton"; // ajustá el path si es necesario
-
+import RestoreButton from "../RestoreButton/RestoreButton";
 
 const AbmPerchaTabla = () => {
   const initializableNewPercha = (): Percha => ({
@@ -33,7 +32,7 @@ const AbmPerchaTabla = () => {
   useEffect(() => {
     const fetchDatos = async () => {
       try {
-        const datos = await PerchaService.getPerchas();
+        const datos = await PerchaService.getPerchas(showDeleted);
         setPerchas(datos);
         setIsLoading(false);
       } catch (error) {
@@ -41,7 +40,7 @@ const AbmPerchaTabla = () => {
       }
     };
     fetchDatos();
-  }, [refreshData]);
+  }, [refreshData, showDeleted]);
 
   const handleClick = (tituloModal: string, percha: Percha, modalType: ModalType) => {
     setShowModal(true);
@@ -49,11 +48,6 @@ const AbmPerchaTabla = () => {
     setPercha(percha);
     setTituloModal(tituloModal);
   };
-
-  // Filtrar perchas según el checkbox showDeleted
-  const perchasFiltradas = perchas.filter(p =>
-    showDeleted ? true : !p.fechaBajaPercha
-  );
 
   return (
     <>
@@ -101,7 +95,7 @@ const AbmPerchaTabla = () => {
                 </tr>
               </thead>
               <tbody>
-                {perchasFiltradas.map((p) => (
+                {perchas.map((p) => (
                   <tr key={p.id}>
                     <td>{p.id}</td>
                     <td>{p.numeroPercha}</td>
@@ -118,19 +112,19 @@ const AbmPerchaTabla = () => {
                         />
                       </span>
                       <span>
-                          {p.fechaBajaPercha ? (
-                            <RestoreButton
-                              onClick={() =>
-                                handleClick("Dar de Alta Percha", p, ModalType.RESTORE)
-                              }
-                            />
-                          ) : (
-                            <DeleteButton
-                              onClick={() =>
-                                handleClick("Dar de Baja Percha", p, ModalType.DELETE)
-                                }
-                         />
-                      )}
+                        {p.fechaBajaPercha ? (
+                          <RestoreButton
+                            onClick={() =>
+                              handleClick("Dar de Alta Percha", p, ModalType.RESTORE)
+                            }
+                          />
+                        ) : (
+                          <DeleteButton
+                            onClick={() =>
+                              handleClick("Dar de Baja Percha", p, ModalType.DELETE)
+                            }
+                          />
+                        )}
                       </span>
                     </td>
                   </tr>
