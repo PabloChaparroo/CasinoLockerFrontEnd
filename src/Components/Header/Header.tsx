@@ -24,30 +24,43 @@ const Header = () => {
     };
   }, []);
 
-  // Función para navegar a home
   const goHome = () => {
     navigate('/');
   };
 
+  const isLoggedIn = !!localStorage.getItem('token');
+  const nombreUsuario = localStorage.getItem('nombreUsuario') || 'Usuario';
+
   return (
     <div className="header-bar d-flex justify-content-between align-items-center px-4 py-2 shadow-custom">
-      {/* Contenedor clickable */}
+      {/* Logo y título */}
       <div
         className="d-flex align-items-center clickable-logo-text"
         onClick={goHome}
         style={{ cursor: 'pointer' }}
         role="button"
         tabIndex={0}
-        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') goHome(); }} // accesibilidad: enter y espacio también navegan
+        onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') goHome(); }}
       >
         <img src={logo} alt="Logo" className="header-logo me-3 rounded" />
         <span className="app-title">CasinoLocker</span>
       </div>
 
       <div className="d-flex align-items-center">
-        <i className="fas fa-user-circle fa-lg me-2 text-white"></i>
-        {localStorage.getItem('token') ? (
-          <span className="user-label text-white">Recepcionista: Juan Carlos</span>
+        {isLoggedIn ? (
+          <>
+            <i className="fas fa-user-circle fa-lg me-2 text-white"></i>
+            <span
+              className="user-label text-white"
+              style={{ cursor: 'pointer', textDecoration: 'underline' }}
+              onClick={() => navigate('/perfil')}
+              role="button"
+              tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/perfil'); }}
+            >
+              {nombreUsuario}
+            </span>
+          </>
         ) : (
           <Button onClick={() => navigate('/login')} className="btn-outline-light-custom btn-sm">
             Iniciar sesión
