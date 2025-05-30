@@ -15,7 +15,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element }) => {
     }
     
     // Si no hay token, redirige a la página de inicio de sesión
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
 }
 
 export default PrivateRoute;

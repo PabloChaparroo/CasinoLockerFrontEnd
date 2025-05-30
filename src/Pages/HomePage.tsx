@@ -35,7 +35,7 @@ const HomePage = () => {
           ))}
         </section>
 
-        <button className="homepage-button" onClick={() => navigate('/casilleros')}>
+        <button className="homepage-button" onClick={() => navigate('/auth/login')}>
           Comenzar
         </button>
       </div>

@@ -46,5 +46,12 @@ export const ClienteService ={
         await fetch(`${BASE_URL}/api/clientes/${idCliente}`, {
             method: "DELETE"
         });
-    }
+    },
+
+    
+buscarClientesPorNombre: async (nombre: string): Promise<Cliente[]> => {
+  const response = await fetch(`${BASE_URL}/api/clientes/buscar/${encodeURIComponent(nombre)}`);
+  if (!response.ok) throw new Error('Error al buscar clientes');
+  return await response.json();
+},
 }

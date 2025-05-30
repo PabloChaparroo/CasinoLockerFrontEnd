@@ -33,7 +33,7 @@ const Sidebar = () => {
         </NavLink>
         
         <NavLink 
-          to="/casilleros" 
+          to="/api/casilleros" 
           className={({ isActive }) => 
             `sidebar-link ${isActive ? "active" : ""}`
           }
@@ -44,7 +44,7 @@ const Sidebar = () => {
 
         {/* Repite el mismo patrón para los demás enlaces */}
         <NavLink 
-          to="/perchas" 
+          to="/api/perchas" 
           className={({ isActive }) => 
             `sidebar-link ${isActive ? "active" : ""}`
           }

@@ -33,6 +33,7 @@ const FormRegister: React.FC = () => {
 
   const formik = useFormik({
     initialValues: {
+      id: 0,
       username: "",
       password: "",
       nombreUsuario: "",

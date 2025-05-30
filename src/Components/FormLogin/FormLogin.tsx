@@ -23,15 +23,21 @@ const FormLogin: React.FC = () => {
     },
     validationSchema: validationSchema,
     onSubmit: async (values) => {
-      try {
-        const token = await AuthService.login(values);
-        console.log("Inicio de sesión exitoso. Token:", token);
-        navigate('/');
-        toast.success('Inicio de sesión exitoso');
-      } catch (error) {
-        console.error("Error al iniciar sesión:");
-      }
-    },
+  try {
+    const token = await AuthService.login(values);
+    console.log("Inicio de sesión exitoso. Token:", token);
+    navigate('/');
+    toast.success('Inicio de sesión exitoso');
+  } catch (error: any) {
+    const status = error?.response?.status;
+    if (status === 400 || status === 403) {
+      toast.error("Correo o contraseña incorrectos.");
+    } else {
+      toast.error("Error al iniciar sesión. Intente nuevamente.");
+    }
+    console.error("Error al iniciar sesión:", error);
+  }
+},
   });
 
   return (

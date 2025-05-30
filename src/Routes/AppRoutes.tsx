@@ -18,11 +18,11 @@ const AppRoutes: React.FC = () => {
         <Routes>
             
             <Route path="/" element={<HomePage/>}/>
-            <Route path="/login" element={<LoginPage />} />
+            <Route path="/auth/login" element={<LoginPage />} />
             <Route path="/registrarse" element={<RegisterPage />} />
-            <Route path="/perfil" element={<PerfilPage/>} />
-            <Route path="/casilleros" element={<CasillerosPages/>}/>
-            <Route path="/perchas" element={<PerchasPages/>}/>
+            <Route path="/api/usuarios/showProfile" element={<PerfilPage/>} />
+            <Route path="/api/casilleros" element={<CasillerosPages/>}/>
+            <Route path="/api/perchas" element={<PerchasPages/>}/>
             <Route path="/clientes" element={<ClientesPages/>}/>
             <Route path="/abmCasilleros" element={<AbmCasillerosPage/>}/>
             <Route path="/abmPerchas" element={<AbmPerchasPage/>}/>

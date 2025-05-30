@@ -53,16 +53,16 @@ const Header = () => {
             <span
               className="user-label text-white"
               style={{ cursor: 'pointer', textDecoration: 'underline' }}
-              onClick={() => navigate('/perfil')}
+              onClick={() => navigate('/api/usuarios/showProfile')}
               role="button"
               tabIndex={0}
-              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/perfil'); }}
+              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') navigate('/api/usuarios/showProfile'); }}
             >
               {nombreUsuario}
             </span>
           </>
         ) : (
-          <Button onClick={() => navigate('/login')} className="btn-outline-light-custom btn-sm">
+          <Button onClick={() => navigate('/auth/login')} className="btn-outline-light-custom btn-sm">
             Iniciar sesión
           </Button>
         )}

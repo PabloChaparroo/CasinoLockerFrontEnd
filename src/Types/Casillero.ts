@@ -10,6 +10,6 @@ export interface Casillero{
     fechaModificacionCasillero: string | null;
     tipoCasillero: TipoCasillero |  null;
     estadoCasilleroPercha: EstadoCasilleroPercha | null;
-
+    
 
 }

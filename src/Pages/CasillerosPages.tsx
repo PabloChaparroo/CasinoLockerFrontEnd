@@ -7,6 +7,11 @@ import './CasillerosPages.css';
 import type { Casillero } from '../Types/Casillero';
 import type { TipoCasillero } from '../Types/TipoCasillero';
 import { FaBoxOpen } from 'react-icons/fa';
+import { ModalType } from '../enums/ModalTypes';
+import type { Reserva } from '../Types/Reserva';
+import ReservaModal from '../Components/ReservaModal/ReservaModal';
+import { ReservaService } from '../Services/ReservaService';
+import ReservaOcupadaModal from '../Components/ReservaOcupadaModal/ReservaOcupadaModal';
 
 interface CasilleroVisual extends Casillero {
   estadoNombre: string;
@@ -20,6 +25,8 @@ const CasillerosPages = () => {
   const [error, setError] = useState<string | null>(null);
   const [tipoCasilleroSeleccionado, setTipoCasilleroSeleccionado] = useState("Todos");
   const [tiposCasillero, setTiposCasillero] = useState<TipoCasillero[]>([]);
+  
+  const [refreshData, setRefreshData] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -50,7 +57,7 @@ const CasillerosPages = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refreshData]);
 
   const filteredCasilleros = useMemo(() => {
     let filtered = casilleros;
@@ -72,7 +79,53 @@ const CasillerosPages = () => {
     );
   }
 
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState(ModalType.NONE);
+  const [tituloModal, setTituloModal] = useState("");
+  const [reserva, setReserva] = useState<Reserva | null>(null);
+
+
+
+  //Modal Reserva 
+    const initialNewReserva = (casillero: Casillero | null = null): Reserva => ({
+      id: 0,
+      numeroReserva: 0,
+      fechaAltaReserva: null,
+      fechaModificacionReserva: null,
+      fechaBajaReserva: null,
+      estadoReserva: null,
+      objetos: [],
+      casillero: casillero,
+      usuario: null,
+      cliente: null
+    });
+  
+  
+ const handleClick = (tituloModal: string, reserva: Reserva, modalType: ModalType) => {
+     setShowModal(true);
+     setModalType(modalType);
+     setReserva(reserva);
+     setTituloModal(tituloModal);
+   };
+
+  const [showReservaOcupadaModal, setShowReservaOcupadaModal] = useState(false);
+  const [modalTypeReservaOcupadaModal, setModalTypeReservaOcupadaModal] = useState(ModalType.NONE);
+  const [tituloReservaOcupadaModal, setTituloReservaOcupadaModal] = useState("");
+  const [casilleroReserva, setCasilleroReserva] = useState<Casillero | null >(null);
+
+
+
+   const handleClickReservaOcupadaModal = (tituloReservaOcupadaModal: string, casillero: Casillero, modalType: ModalType) => {
+     setShowReservaOcupadaModal(true);
+     setModalTypeReservaOcupadaModal(modalType);
+     setCasilleroReserva(casillero);
+     setTituloReservaOcupadaModal(tituloReservaOcupadaModal);
+   };
+
   return (
+
+
+    
     <div className="casilleros-container">
       <h1 className="page-title">Gestión de Casilleros</h1>
       <div className="page-container">
@@ -104,6 +157,13 @@ const CasillerosPages = () => {
                 {filteredCasilleros.map(casillero => (
                   <div
                     key={casillero.id}
+                    onClick={() => {
+                      if (casillero.estadoCasilleroPercha?.reservable) {
+                        handleClick("Reservar Casillero", initialNewReserva(casillero), ModalType.CREATE);
+                      } else if (casillero.estadoCasilleroPercha?.nombreEstadoCasilleroPercha === "Ocupado") {
+                        handleClickReservaOcupadaModal("Finalizar Reserva", casillero, ModalType.UPDATE);
+                      }
+                    }}
                     className="casillero-card"
                     style={{
                       backgroundColor: casillero.colorEstado,
@@ -124,6 +184,28 @@ const CasillerosPages = () => {
           </div>
         )}
       </div>
+      {showModal && (
+        <ReservaModal
+          tituloModal={tituloModal}
+          showModal={showModal}
+          onHide={() => setShowModal(false)}
+          modalType={modalType}
+          reserva={reserva ?? initialNewReserva()} 
+          refreshData={setRefreshData}
+        />
+      )}
+
+      {showReservaOcupadaModal && (
+  <ReservaOcupadaModal
+    tituloModal={tituloReservaOcupadaModal}
+    showModal={showReservaOcupadaModal}
+    onHide={() => setShowReservaOcupadaModal(false)}
+    modalType={modalTypeReservaOcupadaModal}
+    casillero={casilleroReserva}
+    refreshData={setRefreshData}
+  />
+)}
+
     </div>
   );
 };
@@ -150,5 +232,8 @@ function getContrastColor(hexColor: string): string {
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.5 ? '#000' : '#FFF';
 }
+
+
+
 
 export default CasillerosPages;
