@@ -4,6 +4,7 @@ import type { Usuario } from "./Usuario";
 import type { Cliente } from "./Cliente";
 import type { Objeto } from "./Objeto";
 import type { EstadoReserva } from "../enums/estadoReserva";
+import type { Percha } from "./Percha";
 
 export interface Reserva {
   id: number;
@@ -17,4 +18,5 @@ export interface Reserva {
   casillero: Casillero | null;
   usuario: Usuario | null;
   cliente: Cliente | null;
+  percha: Percha | null;
 }

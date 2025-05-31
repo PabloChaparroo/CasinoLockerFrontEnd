@@ -2,9 +2,16 @@ import React, { useState, useEffect, useMemo } from 'react';
 import FilterBar from '../Components/FilterBar/FilterBar';
 import { EstadoCasilleroPerchaService } from '../Services/EstadoCasilleroPerchaService';
 import { PerchaService } from '../Services/PerchaService';
-import './PerchasPages.css';
-import type { Percha } from '../Types/Percha';
+import { ReservaService } from '../Services/ReservaService';
 import { TbHanger } from 'react-icons/tb';
+import './PerchasPages.css';
+
+import type { Percha } from '../Types/Percha';
+import type { Reserva } from '../Types/Reserva';
+import { ModalType } from '../enums/ModalTypes';
+
+import ReservaPerchaModal from '../Components/ReservaPerchaModal/ReservaPerchaModal';
+import ReservaPerchaOcupadaModal from '../Components/ReservaPerchaOcupadaModal/ReservaPerchaOcupadaModal';
 
 interface PerchaVisual extends Percha {
   estadoNombre: string;
@@ -12,10 +19,21 @@ interface PerchaVisual extends Percha {
 }
 
 const PerchasPages = () => {
-  const [activeFilter, setActiveFilter] = useState<string>("Todos");
+  const [activeFilter, setActiveFilter] = useState("Todos");
   const [perchas, setPerchas] = useState<PerchaVisual[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [refreshData, setRefreshData] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [modalType, setModalType] = useState(ModalType.NONE);
+  const [tituloModal, setTituloModal] = useState("");
+  const [reserva, setReserva] = useState<Reserva | null>(null);
+
+  const [showOcupadaModal, setShowOcupadaModal] = useState(false);
+  const [modalTypeOcupada, setModalTypeOcupada] = useState(ModalType.NONE);
+  const [tituloOcupadaModal, setTituloOcupadaModal] = useState("");
+  const [perchaReserva, setPerchaReserva] = useState<Percha | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,13 +48,10 @@ const PerchasPages = () => {
 
         const perchasConColor: PerchaVisual[] = perchasData.map(percha => {
           const estado = percha.estadoCasilleroPercha;
-          const estadoNombre = estado?.nombreEstadoCasilleroPercha || 'Sin estado';
-          const colorEstado = estado?.colorEstadoCasilleroPercha || '#CCCCCC';
-
           return {
             ...percha,
-            estadoNombre,
-            colorEstado,
+            estadoNombre: estado?.nombreEstadoCasilleroPercha || 'Sin estado',
+            colorEstado: estado?.colorEstadoCasilleroPercha || '#CCCCCC'
           };
         });
 
@@ -50,16 +65,54 @@ const PerchasPages = () => {
     };
 
     fetchData();
-  }, []);
+  }, [refreshData]);
 
   const filteredPerchas = useMemo(() => {
     let filtered = perchas;
     if (activeFilter !== "Todos") {
       filtered = filtered.filter(p => p.estadoNombre === activeFilter);
     }
-    filtered.sort((a, b) => a.numeroPercha - b.numeroPercha);
-    return filtered;
+    return filtered.sort((a, b) => a.numeroPercha - b.numeroPercha);
   }, [activeFilter, perchas]);
+
+  const initialNewReserva = (percha: Percha | null = null): Reserva => ({
+  id: 0,
+  numeroReserva: 0,
+  fechaAltaReserva: null,
+  fechaModificacionReserva: null,
+  fechaBajaReserva: null,
+  fechaFinalizacionReserva: null,
+  estadoReserva: null,
+  objetos: [{
+    id: 0,
+    numeroObjeto: 0,
+    descripcionObjeto: "",
+    fechaAltaObjeto: null,
+    fechaModificacionObjeto: null,
+    fechaBajaObjeto: null
+  }],
+  casillero: null,
+  usuario: null,
+  cliente: null,
+  percha: percha ? { 
+    id: percha.id,
+    numeroPercha: percha.numeroPercha
+  } : null
+});
+
+  const handleClick = (percha: PerchaVisual) => {
+    if (percha.estadoCasilleroPercha?.reservable) {
+      setShowModal(true);
+      setModalType(ModalType.CREATE);
+      setTituloModal("Reservar Percha");
+      setReserva(initialNewReserva(percha));
+    } else if (percha.estadoNombre === "Ocupado") {
+      setShowOcupadaModal(true);
+      setModalTypeOcupada(ModalType.UPDATE);
+      setTituloOcupadaModal("Finalizar Reserva");
+      setPerchaReserva(percha);
+    }
+  };
 
   if (error) {
     return (
@@ -77,14 +130,10 @@ const PerchasPages = () => {
     <div className="perchas-container">
       <div className="header-section">
         <h1 className="page-title">Gestión de Perchas</h1>
-        <p className="page-subtitle">Sistema de administración de espacios</p>
       </div>
 
       <div className="page-container">
-        <FilterBar
-          activeFilter={activeFilter}
-          onFilterChange={setActiveFilter}
-        />
+        <FilterBar activeFilter={activeFilter} onFilterChange={setActiveFilter} />
 
         {loading ? (
           <div className="loading-container">
@@ -98,6 +147,7 @@ const PerchasPages = () => {
                 {filteredPerchas.map(percha => (
                   <div
                     key={percha.id}
+                    onClick={() => handleClick(percha)}
                     className="percha-card"
                     style={{
                       backgroundColor: percha.colorEstado,
@@ -121,6 +171,28 @@ const PerchasPages = () => {
           </div>
         )}
       </div>
+
+      {showModal && (
+        <ReservaPerchaModal
+          tituloModal={tituloModal}
+          showModal={showModal}
+          onHide={() => setShowModal(false)}
+          modalType={modalType}
+          reserva={reserva ?? initialNewReserva()}
+          refreshData={setRefreshData}
+        />
+      )}
+
+      {showOcupadaModal && (
+        <ReservaPerchaOcupadaModal
+          tituloModal={tituloOcupadaModal}
+          showModal={showOcupadaModal}
+          onHide={() => setShowOcupadaModal(false)}
+          modalType={modalTypeOcupada}
+          percha={perchaReserva}
+          refreshData={setRefreshData}
+        />
+      )}
     </div>
   );
 };
@@ -131,7 +203,6 @@ function darkenColor(hex: string, percent: number): string {
   const R = (num >> 16) - amt;
   const G = (num >> 8 & 0x00FF) - amt;
   const B = (num & 0x0000FF) - amt;
-
   return `#${(
     0x1000000 +
     (R < 255 ? (R < 1 ? 0 : R) : 255) * 0x10000 +

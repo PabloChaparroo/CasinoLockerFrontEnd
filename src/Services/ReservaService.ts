@@ -76,7 +76,15 @@ export const ReservaService = {
     }
     const data = await response.json();
     return data as ReservaPendiente[];
-  }
+  },
+   getReservaPorPercha: async (idPercha: number): Promise<Reserva> => {
+        const response = await fetch(`${BASE_URL}/api/reservas/reservaPorPercha/${idPercha}`);
+        if (!response.ok) {
+            throw new Error("Error al obtener la reserva por percha");
+        }
+        const data = await response.json();
+        return data as Reserva;
+    }
 };
 
 
