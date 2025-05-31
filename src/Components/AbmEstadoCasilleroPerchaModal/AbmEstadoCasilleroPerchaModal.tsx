@@ -71,10 +71,8 @@ const AbmEstadoCasilleroPerchaModal = ({
 const handleSaveUpdate = async (formData: typeof initialValues) => {
   try {
     if (modalType === ModalType.CREATE) {
-      const nuevoEstado = {
-        ...formData,
-        fechaAltaEstadoCasilleroPercha: new Date().toISOString().split("T")[0],
-        fechaBajaEstadoCasilleroPercha: null,
+        const nuevoEstado = {
+          ...formData
       };
       await EstadoCasilleroPerchaService.createEstado(nuevoEstado);
       toast.success("Estado creado con éxito", { position: "top-center" });

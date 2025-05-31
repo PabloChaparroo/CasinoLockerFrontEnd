@@ -11,6 +11,7 @@ export interface Reserva {
   fechaAltaReserva: string | null;
   fechaModificacionReserva: string | null;
   fechaBajaReserva: string | null;
+  fechaFinalizacionReserva: string | null ,
   estadoReserva: EstadoReserva | null;
   objetos: Objeto[] | null;
   casillero: Casillero | null;

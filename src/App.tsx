@@ -8,25 +8,27 @@ import Header from './Components/Header/Header';
 import './App.css'; 
 import SideBar from './Components/SideBar/SideBar';
 import 'react-toastify/dist/ReactToastify.css'
-
+import { JornadaProvider } from "./context/JornadaContext";
 
 
 function App() {
   return (
-    <>
-      <ToastContainer/>
-      <BrowserRouter>
-        <Header /> {/* Header fijo en la parte superior */}
-        <div className="app-layout">
-          <SideBar /> {/* Sidebar debajo del Header */}
-          <Container className="main-content">
-            <Suspense fallback={<Loader />}>
-              <AppRoutes />
-            </Suspense>
-          </Container>
-        </div>
-      </BrowserRouter>
-    </>
+    <JornadaProvider>
+      <ToastContainer />
+        <BrowserRouter>
+          <div className="app-wrapper"> {/* Contenedor global centrado */}
+            <Header />
+            <div className="app-layout">
+              <SideBar />
+              <div className="main-content">
+                <Suspense fallback={<Loader />}>
+                  <AppRoutes />
+                </Suspense>
+              </div>
+            </div>
+          </div>
+        </BrowserRouter>
+    </JornadaProvider>
   );
 }
 

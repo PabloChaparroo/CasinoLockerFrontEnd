@@ -24,6 +24,7 @@ const ClienteModal = ({
   cliente,
   refreshData,
 }: ClienteModalProps) => {
+  // Opcional: si decides mantener esta lista para validaciones
   const [clientes, setClientes] = useState<Cliente[]>([]);
 
   useEffect(() => {
@@ -41,7 +42,7 @@ const ClienteModal = ({
   const validationSchema = Yup.object().shape({
     nombreCliente: Yup.string().required("El nombre es obligatorio"),
     dniCliente: Yup.number()
-      .min(1)
+      .min(1, "DNI inválido")
       .required("El DNI es obligatorio"),
     telefonoCliente: Yup.number().required("El teléfono es obligatorio"),
     mailCliente: Yup.string().email("Email inválido").required("Email es obligatorio"),
@@ -58,13 +59,8 @@ const ClienteModal = ({
 
   const handleDelete = async () => {
     try {
-      const fechaBaja = new Date().toISOString().split("T")[0];
-
-      await ClienteService.updateCliente(cliente.id, {
-        ...cliente,
-        fechaHoraBajaCliente: fechaBaja,
-        fechaHoraModificacionCliente: fechaBaja,
-      });
+      // Usar el endpoint PUT darDeBaja/{id}
+      await ClienteService.deleteCliente(cliente.id);
 
       toast.success("Cliente dado de baja");
       onHide();
@@ -76,13 +72,7 @@ const ClienteModal = ({
 
   const handleRestore = async () => {
     try {
-      const fechaMod = new Date().toISOString().split("T")[0];
-
-      await ClienteService.updateCliente(cliente.id, {
-        ...cliente,
-        fechaHoraBajaCliente: null,
-        fechaHoraModificacionCliente: fechaMod,
-      });
+      await ClienteService.restaurarCliente(cliente.id);
 
       toast.success("Cliente dado de alta");
       onHide();
@@ -174,9 +164,7 @@ const ClienteModal = ({
                   value={formik.values.nombreCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  isInvalid={
-                    !!formik.errors.nombreCliente && formik.touched.nombreCliente
-                  }
+                  isInvalid={!!formik.errors.nombreCliente && formik.touched.nombreCliente}
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.nombreCliente}
@@ -206,9 +194,7 @@ const ClienteModal = ({
                   value={formik.values.telefonoCliente}
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  isInvalid={
-                    !!formik.errors.telefonoCliente && formik.touched.telefonoCliente
-                  }
+                  isInvalid={!!formik.errors.telefonoCliente && formik.touched.telefonoCliente}
                 />
                 <Form.Control.Feedback type="invalid">
                   {formik.errors.telefonoCliente}

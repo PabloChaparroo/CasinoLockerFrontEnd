@@ -16,13 +16,13 @@ export const EstadoCasilleroPerchaService = {
     },
 
     createEstado: async (estado: Partial<EstadoCasilleroPercha>): Promise<EstadoCasilleroPercha> => {
-        const response = await fetch(`${BASE_URL}`, {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(estado)
-        });
-        if (!response.ok) throw new Error("Error creating estado");
-        return await response.json();
+    const response = await fetch(`${BASE_URL}/crear`, {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(estado)
+    });
+    if (!response.ok) throw new Error("Error creating estado");
+    return await response.json();
     },
 
     updateEstado: async (idEstado: number, estado: Partial<EstadoCasilleroPercha>): Promise<EstadoCasilleroPercha> => {

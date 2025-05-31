@@ -1,4 +1,5 @@
 import type { Reserva } from "../Types/Reserva";
+import type { ReservaPendiente } from "../Types/ReservaPendiente";
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -68,6 +69,14 @@ export const ReservaService = {
         const data = await response.json();
         return data;
     },
+     getReservasPendientes: async (): Promise<ReservaPendiente[]> => {
+    const response = await fetch(`${BASE_URL}/api/reservas/activas`);
+    if (!response.ok) {
+      throw new Error("Error al obtener las reservas pendientes");
+    }
+    const data = await response.json();
+    return data as ReservaPendiente[];
+  }
 };
 
 

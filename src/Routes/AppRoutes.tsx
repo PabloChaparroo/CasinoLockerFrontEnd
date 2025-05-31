@@ -11,7 +11,7 @@ import ClientesPages from "../Pages/ClientesPages";
 import LoginPage from "../Pages/LoginPage";
 import RegisterPage from "../Pages/RegisterPage";
 import PerfilPage from "../Pages/PerfilPage";
-
+import FinalizarJornada from "../pages/FinalizarJornada";
 
 const AppRoutes: React.FC = () => {
     return (
@@ -29,6 +29,8 @@ const AppRoutes: React.FC = () => {
             <Route path="/abmTipoCasilleros" element={<AbmTipoCasilleroPage/>}/>
             <Route path="/abmEstadoCasilleroPercha" element={<AbmEstadoCasilleroPerchaPage/>}/>
             <Route path="/abmUsuarios" element={<AbmUsuarioPage/>}/>
+            <Route path="/finalizar-jornada" element={<FinalizarJornada />} />
+
             
 
 

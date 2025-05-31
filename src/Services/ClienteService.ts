@@ -1,57 +1,68 @@
 import type { Cliente } from "../Types/Cliente";
 
 
-const BASE_URL='http://localhost:8080';
+const BASE_URL='http://localhost:8080/api/clientes';
 
-export const ClienteService ={
-    getClientes: async():Promise<Cliente[]>=>{
-        const response= await fetch (`${BASE_URL}/api/clientes`)
-        //const response= await fetch ('/data/clientes.json') //simula la búsqueda a la api pero lo toma del archivo json
-        const data= await response.json() as Cliente[];
-        return data;
-    },
+export const ClienteService = {
+  getClientes: async (): Promise<Cliente[]> => {
+    const response = await fetch(`${BASE_URL}`);
+    if (!response.ok) throw new Error("Error al obtener clientes");
+    const data = (await response.json()) as Cliente[];
+    return data;
+  },
 
-    getCliente: async(idCliente:number):Promise<Cliente[]>=>{
-        const response= await fetch (`${BASE_URL}/api/clientes/${idCliente}`)
-        //const response= await fetch ('/data/cliente.json')
-        const data= await response.json();
-        const clientes = data.find((a:Cliente) => a.id === idCliente);    //esto solo se utiliza al recuperar los datos del archivo json, cuando se consulta a la api devuelve directamente data
-        return clientes;
-    },
-    createCliente: async (cliente: Cliente): Promise<Cliente> =>{ 
-        const response = await fetch(`${BASE_URL}/api/clientes`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cliente)
-        });
-        const data = await response.json();
-        return data;
-    },
+  getCliente: async (idCliente: number): Promise<Cliente> => {
+    const response = await fetch(`${BASE_URL}/${idCliente}`);
+    if (!response.ok) throw new Error("Cliente no encontrado");
+    const data = (await response.json()) as Cliente;
+    return data;
+  },
 
-    updateCliente: async (idCliente: number, cliente: Cliente): Promise<Cliente> => {
-        const response = await fetch(`${BASE_URL}/api/clientes/${idCliente}`, {
-            method: "PUT",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cliente)
-        });
-        const data = await response.json();
-        return data;
-    },
+  createCliente: async (cliente: Cliente): Promise<Cliente> => {
+    const response = await fetch(`${BASE_URL}/crear`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cliente),
+    });
+    if (!response.ok) throw new Error("Error al crear cliente");
+    const data = (await response.json()) as Cliente;
+    return data;
+  },
 
-    deleteCliente: async (idCliente: number): Promise<void> => {
-        await fetch(`${BASE_URL}/api/clientes/${idCliente}`, {
-            method: "DELETE"
-        });
-    },
+  updateCliente: async (idCliente: number, cliente: Cliente): Promise<Cliente> => {
+    const response = await fetch(`${BASE_URL}/modificar/${idCliente}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(cliente),
+    });
+    if (!response.ok) throw new Error("Error al actualizar cliente");
+    const data = (await response.json()) as Cliente;
+    return data;
+  },
 
-    
-buscarClientesPorNombre: async (nombre: string): Promise<Cliente[]> => {
-  const response = await fetch(`${BASE_URL}/api/clientes/buscar/${encodeURIComponent(nombre)}`);
-  if (!response.ok) throw new Error('Error al buscar clientes');
-  return await response.json();
-},
-}
+  deleteCliente: async (idCliente: number): Promise<void> => {
+    await fetch(`${BASE_URL}/darDeBaja/${idCliente}`, {
+      method: "PUT",
+    });
+  },
+
+  restaurarCliente: async (idCliente: number): Promise<Cliente> => {
+    const response = await fetch(`${BASE_URL}/restaurar/${idCliente}`, {
+      method: "PUT",
+    });
+    if (!response.ok) throw new Error("Error al restaurar cliente");
+    const data = (await response.json()) as Cliente;
+    return data;
+  },
+
+  buscarClientesPorNombre: async (nombre: string): Promise<Cliente[]> => {
+    const response = await fetch(`${BASE_URL}/buscar/${encodeURIComponent(nombre)}`);
+    if (!response.ok) throw new Error("Error al buscar clientes");
+    const data = (await response.json()) as Cliente[];
+    return data;
+  },
+};

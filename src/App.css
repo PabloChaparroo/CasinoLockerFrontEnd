@@ -19,7 +19,6 @@
 /* Contenido principal */
 .main-content {
   margin-left: 250px; /* Espacio para el Sidebar */
-  padding: 20px;
   width: calc(100% - 250px);
 }
 

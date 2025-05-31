@@ -17,6 +17,7 @@ const HomePage = () => {
 
   return (
     <>
+    <div className="homepage-wrapper">
       <div className="homepage-container">
         <img src={logo} alt="Casino Locker Logo" className="homepage-logo" />
         <h1 className="homepage-title">Casino Locker</h1>
@@ -53,6 +54,7 @@ const HomePage = () => {
           </p>
         </div>
       </footer>
+      </div>
     </>
   );
 };

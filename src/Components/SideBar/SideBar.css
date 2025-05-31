@@ -1,20 +1,47 @@
 /* Sidebar principal */
 .sidebar-container {
   width: 250px;
-  height: 100vh;
-  background-color: #e3e6ea; /* más contrastante */
-  border-right: 2px solid #ccc;
-  padding: 20px;
+  height: calc(100vh - 60px);
   position: fixed;
   left: 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* sombra sutil */
+  top: 60px; /* debajo del header */
+  z-index: 100;
+  background-color: #e3e6ea;
+  border-right: 2px solid #ccc;
+  padding: 20px 15px; /* Menos padding horizontal */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.jornada-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 12px;
+  margin: 10px 0;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  width: 100%;
+  text-align: center;
+}
+
+.jornada-button:hover {
+  transform: scale(1.03);
+}
+
+.jornada-activa {
+  background-color: #dc3545 !important; /* rojo */
 }
 
 /* Título */
 .sidebar-title {
   color: #333;
   font-weight: 600;
-  margin-bottom: 20px;
+  margin-bottom: 10px; /* menos margen para juntar con botón */
   padding-bottom: 10px;
   border-bottom: 1px solid #ddd;
 }
@@ -43,4 +70,35 @@
 .sidebar-link.active {
   background-color: #007bff;
   color: white !important;
+}
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* espacio pequeño entre título y botón */
+  margin-bottom: 15px;
+}
+/* Scrollbar para sidebar (Webkit browsers: Chrome, Edge, Safari) */
+.sidebar-container::-webkit-scrollbar {
+  width: 6px;              /* Más delgada */
+}
+
+.sidebar-container::-webkit-scrollbar-track {
+  background: transparent; /* Fondo invisible para que no destaque */
+}
+
+.sidebar-container::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.1); /* Color gris claro y transparente */
+  border-radius: 3px;
+  border: 1px solid transparent; /* Espacio para suavizar */
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-container::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.2); /* Un poco más oscuro al hover */
+}
+
+/* Scrollbar para Firefox */
+.sidebar-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.1) transparent;
 }

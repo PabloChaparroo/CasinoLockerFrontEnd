@@ -2,71 +2,61 @@ import { useEffect, useState } from "react";
 import { ReservaService } from "../../Services/ReservaService";
 import type { Reserva } from "../../Types/Reserva";
 import { toast } from "react-toastify";
-import type { ModalType } from "../../enums/ModalTypes";
-import type { Casillero } from "../../Types/Casillero";
 import { Button, Form, Modal } from "react-bootstrap";
 
-
-type ReservaOcupadaModalProps = {
+type ReservaModalPorIdProps = {
   tituloModal: string;
   showModal: boolean;
   onHide: () => void;
-  modalType: ModalType;
-  casillero: Casillero | null;
-  refreshData: React.Dispatch<React.SetStateAction<boolean>>;
+  reservaId: number | null;
+  refreshData: () => void;
 };
-//crear formato de fecha para convertirla en algo mas visible
+
+// Formatear la fecha de forma legible
 const formatearFecha = (fechaISO: string): string => {
   const fecha = new Date(fechaISO);
-  const dia = String(fecha.getDate()).padStart(2, '0');
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
   const anio = fecha.getFullYear();
-  const horas = String(fecha.getHours()).padStart(2, '0');
-  const minutos = String(fecha.getMinutes()).padStart(2, '0');
+  const horas = String(fecha.getHours()).padStart(2, "0");
+  const minutos = String(fecha.getMinutes()).padStart(2, "0");
 
   return `${dia}/${mes}/${anio} - ${horas}:${minutos}`;
 };
-const ReservaOcupadaModal = ({
+
+const ReservaModalPorId = ({
   tituloModal,
   showModal,
   onHide,
-  modalType,
-  casillero,
+  reservaId,
   refreshData,
-}: ReservaOcupadaModalProps) => {
+}: ReservaModalPorIdProps) => {
+  const [reserva, setReserva] = useState<Reserva>();
 
-    const [reserva, setReserva] = useState<Reserva>();
+  useEffect(() => {
+    const fetchDatos = async () => {
+      try {
+        if (reservaId !== null) {
+          const getReserva = await ReservaService.getReserva(reservaId);
+          setReserva(getReserva);
+        }
+      } catch {
+        toast.error("Error al cargar la reserva");
+      }
+    };
+    fetchDatos();
+  }, [reservaId]);
 
-    useEffect(() => {
-        const fetchDatos = async () => {
-          try {
-            
-           if (casillero) {
-        const getReserva = await ReservaService.getReservaCasillero(casillero.id);
-        setReserva(getReserva);
-        //console.log("reserva", getReserva);
-            } else {
-        console.log("Casillero es null");
-          }} catch {
-            toast.error('Error al cargar datos necesarios');
-          }
-        };
-        fetchDatos();
-      }, []);
-    
-
-      //Finalizar reserva
-      const handleFinalizarReserva = async () => {
+  const handleFinalizarReserva = async () => {
     try {
       if (reserva) {
-        console.log("Finalizando reserva", reserva);
         await ReservaService.finalizarReserva(reserva.id);
-        toast.success('Reserva finalizada con éxito');
+        toast.success("Reserva finalizada con éxito");
         onHide();
-        refreshData(prevState => !prevState);
+        refreshData();
       }
-    } catch (error) {
-      toast.error('Error al finalizar la reserva');
+    } catch {
+      toast.error("Error al finalizar la reserva");
     }
   };
 
@@ -84,19 +74,31 @@ const ReservaOcupadaModal = ({
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Cliente</Form.Label>
-              <Form.Control type="text" value={reserva.cliente?.nombreCliente || 'Sin cliente'} readOnly />
+              <Form.Control
+                type="text"
+                value={reserva.cliente?.nombreCliente || "Sin cliente"}
+                readOnly
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Fecha de Alta</Form.Label>
               <Form.Control
                 type="text"
-                value={reserva.fechaAltaReserva ? formatearFecha(reserva.fechaAltaReserva) : 'Sin fecha'}
+                value={
+                  reserva.fechaAltaReserva
+                    ? formatearFecha(reserva.fechaAltaReserva)
+                    : "Sin fecha"
+                }
                 readOnly
-              /> 
+              />
             </Form.Group>
             <Form.Group className="mb-3">
               <Form.Label>Estado de la Reserva</Form.Label>
-              <Form.Control type="text" value={reserva.estadoReserva || 'Sin estado'} readOnly />
+              <Form.Control
+                type="text"
+                value={reserva.estadoReserva || "Sin estado"}
+                readOnly
+              />
             </Form.Group>
           </>
         ) : (
@@ -112,7 +114,7 @@ const ReservaOcupadaModal = ({
         </Button>
       </Modal.Footer>
     </Modal>
-  )
-}
+  );
+};
 
-export default ReservaOcupadaModal
+export default ReservaModalPorId;

@@ -52,6 +52,7 @@ const initialValues: Reserva = {
   fechaAltaReserva: null,
   fechaModificacionReserva: null,
   fechaBajaReserva: null,
+  fechaFinalizacionReserva: null,
   estadoReserva: null,
   objetos: null,
   casillero: null,
