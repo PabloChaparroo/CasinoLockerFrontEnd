@@ -60,5 +60,10 @@ export const CasilleroService ={
         });
         if (!response.ok) throw new Error("Error en restaurar");
         return await response.json();
-    }
+    },
+    getCasillerosObjetoPerdido: async():Promise<Casillero[]>=>{
+        const response= await fetch (`${BASE_URL}/api/casilleros/casilleros-objeto-perdido`)
+        const data= await response.json() as Casillero[];
+        return data;
+    },
 }

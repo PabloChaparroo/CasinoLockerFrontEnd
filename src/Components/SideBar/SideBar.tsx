@@ -68,7 +68,13 @@ const Sidebar = () => {
             </NavLink>
           </>
         )}
-
+        <NavLink 
+          to="/objetos-perdidos" 
+          className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}
+        >
+          <PiLockersBold className="sidebar-icon" />
+          Objetos Perdidos
+        </NavLink>
         <NavLink 
           to="/clientes" 
           className={({ isActive }) => 

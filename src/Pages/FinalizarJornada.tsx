@@ -5,7 +5,8 @@ import { useJornada } from "../context/JornadaContext";
 import { ReservaService } from "../Services/ReservaService";
 import type { ReservaPendiente } from "../Types/ReservaPendiente";
 import FinalizarReservaModal from "../Components/ReservaFinalizar/ReservaFinalizar";
-import { toast } from "react-toastify"; // <-- Importa toast
+import ObjetosPerdidosModal from "../Components/ObjetosPerdidosModal/ObjetosPerdidosModal";
+import { toast } from "react-toastify";
 import './FinalizarJornada.css';
 
 const FinalizarJornada = () => {
@@ -16,6 +17,9 @@ const FinalizarJornada = () => {
 
   const [showFinalizarReservaModal, setShowFinalizarReservaModal] = useState(false);
   const [reservaSeleccionadaId, setReservaSeleccionadaId] = useState<number | null>(null);
+  
+  const [showObjetosPerdidosModal, setShowObjetosPerdidosModal] = useState(false);
+  const [reservaSeleccionada, setReservaSeleccionada] = useState<ReservaPendiente | null>(null);
 
   useEffect(() => {
     const fetchReservas = async () => {
@@ -35,12 +39,12 @@ const FinalizarJornada = () => {
 
   const handleConfirmarFinalizar = () => {
     if (reservasPendientes.length > 0) {
-      toast.warning("No se puede finalizar la jornada, aún quedan reservas sin finalizar."); // <-- Usar toast.warning
+      toast.warning("No se puede finalizar la jornada, aún quedan reservas sin finalizar.");
       return;
     }
     setMostrarJornada(false);
     setShowModal(false);
-    toast.success("Jornada finalizada correctamente."); // <-- Usar toast.success
+    toast.success("Jornada finalizada correctamente.");
     navigate("/");
   };
 
@@ -50,8 +54,9 @@ const FinalizarJornada = () => {
   };
 
   const handleAbrirObjetosPerdidos = (reserva: ReservaPendiente) => {
-    toast.info(`Abrir modal de objetos perdidos para la reserva ${reserva.id} (pendiente de implementación)`);
-  };
+  setReservaSeleccionada(reserva);
+  setShowObjetosPerdidosModal(true);
+};
 
   const refrescarReservas = async () => {
     try {
@@ -149,6 +154,15 @@ const FinalizarJornada = () => {
             setReservasPendientes(data);
             setShowFinalizarReservaModal(false);
           }}
+        />
+      )}
+
+      {showObjetosPerdidosModal && reservaSeleccionada && (
+      <ObjetosPerdidosModal
+        showModal={showObjetosPerdidosModal}
+        onHide={() => setShowObjetosPerdidosModal(false)}
+        reservaPendiente={reservaSeleccionada}
+        refreshData={refrescarReservas}
         />
       )}
     </div>
