@@ -1,0 +1,100 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-custom-content {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  max-height: 80vh;
+  overflow-y: auto;
+  width: 600px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.close-button {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  color: #555;
+  cursor: pointer;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.reserva-card {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid #dee2e6;
+}
+
+.reserva-info p {
+  margin: 0.25rem 0;
+}
+
+.objetos-list ul {
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.reserva-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.accion-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+.accion-btn.primary {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.accion-btn.primary:hover {
+  background-color: #0b5ed7;
+}
+
+.accion-btn.secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.accion-btn.secondary:hover {
+  background-color: #5a6268;
+}
+.accion-btn.danger {
+  background-color: #dc3545;
+  color: white;
+}
+
+.accion-btn.danger:hover {
+  background-color: #bb2d3b;
+}
