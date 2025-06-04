@@ -13,6 +13,7 @@ import RegisterPage from "../Pages/RegisterPage";
 import PerfilPage from "../Pages/PerfilPage";
 import FinalizarJornada from "../Pages/FinalizarJornada";
 import ObjetosPerdidosPage from "../Pages/ObjetosPerdidosPage";
+import ReporteReservasPage from "../Pages/ReporteReservasPage";
 
 const AppRoutes: React.FC = () => {
     return (
@@ -32,9 +33,8 @@ const AppRoutes: React.FC = () => {
             <Route path="/abmUsuarios" element={<AbmUsuarioPage/>}/>
             <Route path="/finalizar-jornada" element={<FinalizarJornada />} />
             <Route path="/objetos-perdidos" element={<ObjetosPerdidosPage />} />
+            <Route path="/reporte-reservas" element={<ReporteReservasPage />} />
             
-
-
 
 
         </Routes>    

@@ -68,6 +68,10 @@ const Sidebar = () => {
             </NavLink>
           </>
         )}
+        <NavLink to="/reporte-reservas" className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}>
+          <HiOutlineClipboardDocumentList className="sidebar-icon" />
+          Reporte Reservas
+        </NavLink>
         <NavLink 
           to="/objetos-perdidos" 
           className={({ isActive }) => `sidebar-link ${isActive ? "active" : ""}`}

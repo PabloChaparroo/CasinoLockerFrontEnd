@@ -1,5 +1,7 @@
 import type { Reserva } from "../Types/Reserva";
 import type { ReservaPendiente } from "../Types/ReservaPendiente";
+import type { ReservaReporte } from "../Types/ReservaReporte";
+import type { ReservaClienteReporte } from "../Types/ReservaClienteReporte";
 
 const BASE_URL = 'http://localhost:8080';
 
@@ -84,7 +86,27 @@ export const ReservaService = {
         }
         const data = await response.json();
         return data as Reserva;
-    }
+    },
+    getReservasEntreFechas: async (desde: string, hasta: string): Promise<ReservaReporte[]> => {
+        const response = await fetch(`${BASE_URL}/api/reservas/reporte?desde=${desde}&hasta=${hasta}`);
+        if (!response.ok) {
+            throw new Error("Error al obtener el reporte de reservas");
+        }
+        const data = await response.json();
+        return data as ReservaReporte[];
+        },
+    getReservasPorCliente: async (
+        idCliente: number,
+        desde: string,
+        hasta: string
+        ): Promise<ReservaClienteReporte[]> => {
+        const response = await fetch(`${BASE_URL}/api/reservas/reportePorCliente?idCliente=${idCliente}&desde=${desde}&hasta=${hasta}`);
+        if (!response.ok) {
+            throw new Error("Error al obtener el reporte por cliente");
+        }
+        const data = await response.json();
+        return data as ReservaClienteReporte[];
+        },    
 };
 
 
